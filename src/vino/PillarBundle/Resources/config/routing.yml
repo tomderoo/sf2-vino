@@ -29,6 +29,11 @@ vino_pillar_logout:
     path:       /logout
     defaults:   { _controller: vinoPillarBundle:Default:logout }
 
+vino_pillar_productinmandje:
+    path:       /inmandje/{slug}
+    defaults:   { _controller: vinoPillarBundle:Mandje:inmandje }
+
+# dummy functies
 vino_pillar_makedummy:
     path:       /wijndummy
     defaults:   { _controller: vinoPillarBundle:Product:makedummy }

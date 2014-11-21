@@ -11,6 +11,10 @@ use vino\PillarBundle\Entity\Land;
 
 class ProductController extends Controller {
     
+    /* * * * * ACTIES * * * * */
+    
+    /* * * WIJNLIJST : toon alle wijnen * * */
+    
     public function wijnlijstAction(Request $request) {
         // toont alle producten in de database
         
@@ -52,24 +56,7 @@ class ProductController extends Controller {
         ));
     }
     
-    public function vindWijnRating($wijnid) {
-        $em = $this->getDoctrine()->getManager();
-        
-        // zoek alle ratings voor deze wijn
-        $reviewlijst = $em->getRepository('vinoPillarBundle:Review')->findByWijn($wijnid);
-        
-        if(!$reviewlijst) {
-            return 0;
-        }
-        
-        $count = 0;
-        $ratingTotaal = 0;
-        foreach ($reviewlijst as $review) {
-            $count++;
-            $ratingTotaal += $review->getRating();
-        }
-        return $ratingTotaal / $count;
-    }
+    /* * * PRODUCTDETAIL : toon één gegeven product in detail * * */
     
     public function productdetailAction(Request $request, $slug) {
         // toont een productdetail op basis van een slug
@@ -103,9 +90,7 @@ class ProductController extends Controller {
         
         // zoek de bijhorende comments
         $reviews = $em->getRepository('vinoPillarBundle:Review')->findByWijn($product->getId());
-        if (!$reviews) {
-            $reviews = null;
-        }
+        if (!$reviews) { $reviews = null; }
         //$comments = null;
         
         // toon het productdetail
@@ -118,9 +103,6 @@ class ProductController extends Controller {
     
     public function makedummyAction() {
         $manager = $this->getDoctrine()->getManager();
-        
-        // maak een empty infoMsg
-        $infoMsg = "";
         
         // maak de slug
         $productSlug = 'beaujolais-1998';
@@ -177,4 +159,28 @@ class ProductController extends Controller {
                 ->add('infomsg', $infoMsg);
         return $this->redirect($this->generateUrl('vino_pillar_homepage'));
     }
+    
+    /* * * * * CALLABLE FUNCTIES * * * * */
+    
+    /* * * WIJNRATING : vind de gecombineerde rating voor een gegeven wijn * * */
+
+    public function vindWijnRating($wijnid) {
+        $em = $this->getDoctrine()->getManager();
+        
+        // zoek alle ratings voor deze wijn
+        $reviewlijst = $em->getRepository('vinoPillarBundle:Review')->findByWijn($wijnid);
+        
+        if(!$reviewlijst) {
+            return 0;
+        }
+        
+        $count = 0;
+        $ratingTotaal = 0;
+        foreach ($reviewlijst as $review) {
+            $count++;
+            $ratingTotaal += $review->getRating();
+        }
+        return $ratingTotaal / $count;
+    }
+    
 }

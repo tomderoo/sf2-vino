@@ -32,7 +32,10 @@
                     <td>{{ product.categorie.naam }}</td>
                     <td>&euro; {{ (product.prijs / 100)|number_format(2) }}</td>
                     <td>{{ product.rating }}</td>
-                    <td><a href="{{ path('vino_pillar_wijndetail', {'slug': product.slug}) }}">Meer over deze wijn</a></td>
+                    <td>
+                        <a href="{{ path('vino_pillar_wijndetail', {'slug': product.slug}) }}">Bekijk</a> /
+                        <a href="{{ path('vino_pillar_productinmandje', {'slug': product.slug}) }}">In mandje</a>
+                    </td>
                 </tr>
             {% endfor %}
         </tbody>
