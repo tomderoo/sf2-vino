@@ -1,0 +1,42 @@
+# src/vino/PillarBundle/Resources/config/routing.yml
+
+vino_pillar_homepage:
+    path:     /
+    defaults: { _controller: vinoPillarBundle:Default:index }
+
+vino_pillar_wijnen:
+    path:       /wijnen
+    defaults:   { _controller: vinoPillarBundle:Product:wijnlijst }
+
+vino_pillar_wijndetail:
+    path:       /wijnen/{slug}
+    # we gaan naar een specifieke controller voor de producten
+    defaults:   { _controller: vinoPillarBundle:Product:productdetail }
+    
+vino_pillar_over-ons:
+    path:       /over-ons
+    defaults:   { _controller: vinoPillarBundle:Default:overons }
+    
+vino_pillar_contact:
+    path:       /contact
+    defaults:   { _controller: vinoPillarBundle:Default:contact }
+    
+vino_pillar_login:
+    path:       /login
+    defaults:   { _controller: vinoPillarBundle:Default:login }
+
+vino_pillar_logout:
+    path:       /logout
+    defaults:   { _controller: vinoPillarBundle:Default:logout }
+
+vino_pillar_makedummy:
+    path:       /wijndummy
+    defaults:   { _controller: vinoPillarBundle:Product:makedummy }
+    
+vino_pillar_dummyreview:
+    path:       /reviewdummy/{slug}
+    defaults:   { _controller: vinoPillarBundle:Klant:dummyreview }
+    
+vino_pillar_dummyklant:
+    path:       /klantdummy
+    defaults:   { _controller: vinoPillarBundle:Klant:dummyklant }

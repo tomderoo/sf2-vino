@@ -1,0 +1,25 @@
+{# src/vino/PillarBundle/Resources/views/Product/productdetail.html.twig #}
+
+{% extends '::base.html.twig' %}
+
+{% block body %}
+    <h1>{{ product.naam }} ({{ product.jaar }})</h1>
+    <p>{{ product.omschrijving }}</p>
+    <p>Categorie: {{ product.categorie.naam }}</p>
+    <p>Afkomstig van {{ product.land.naam }}: {{ product.land.omschrijving }}</p>
+    
+    {% if reviews != null %}
+        <hr>
+        <h3>Gebruikersreviews</h3>
+        {% for review in reviews %}
+            <hr>
+            <p><b>{{ review.titel }}</b> (door <b>{{ review.klant.vNaam }} {{ review.klant.aNaam }}</b>)</p>
+            <p><i>Datum: {{ review.datum|date('d-m-Y') }}</i></p>
+            <blockquote>{{ review.tekst }}</blockquote>
+            <p><b>Rating: {{ review.rating }} / 5</b></p>
+        {% endfor %}
+    {% else %}
+        <hr>
+        <a href="{{ path('vino_pillar_dummyreview', {'slug': product.slug}) }}">Maak een dummyreview!</a>
+    {% endif %}
+{% endblock %}

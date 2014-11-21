@@ -1,0 +1,52 @@
+{# src/vino/PillarBundle/Resources/views/Product/productlijst.html.twig #}
+
+{% extends '::base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    
+    <link href="http://cdn.datatables.net/1.10.4/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css" media="screen" />
+{% endblock %}
+
+{% block body %}
+    <h1>Onze wijnen</h1>
+    <hr>
+    <table id="productlijst">
+        <thead>
+            <tr>
+                <td>Naam</td>
+                <td>Jaar</td>
+                <td>Land</td>
+                <td>Categorie</td>
+                <td>Prijs</td>
+                <td>Rating</td>
+                <td>&nbsp</td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product in productlijst %}
+                <tr>
+                    <td>{{ product.naam }}</td>
+                    <td>{{ product.jaar }}</td>
+                    <td>{{ product.land.naam }}</td>
+                    <td>{{ product.categorie.naam }}</td>
+                    <td>&euro; {{ (product.prijs / 100)|number_format(2) }}</td>
+                    <td>{{ product.rating }}</td>
+                    <td><a href="{{ path('vino_pillar_wijndetail', {'slug': product.slug}) }}">Meer over deze wijn</a></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    
+    <script src="http://cdn.datatables.net/1.10.4/js/jquery.dataTables.min.js" type="text/javascript"></script>
+    
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('#productlijst').DataTable();
+        });
+    </script>
+{% endblock %}

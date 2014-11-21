@@ -1,0 +1,4 @@
+vino_pillar:
+    resource: "@vinoPillarBundle/Resources/config/routing.yml"
+    prefix:   /
+

@@ -1,0 +1,137 @@
+/*
+ *  CSS voor sf-vino
+ */
+
+/* * * * * ALGEMEEN * * * * */
+
+body {
+    font-family: 'Source Sans Pro', Arial, sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    margin: 0;
+    padding: 0;
+    background-color: whitesmoke;
+}
+
+h1, h2, h3, h4, .jumbotron, dt {
+    font-family: 'PT Sans Narrow', Helvetica, sans-serif;
+    /* bootstrap overrides */
+    padding: 0;
+    margin: 0;
+}
+
+.jumbotron {
+    padding: 10px 30px 20px;
+    border: 1px solid grey;
+    border-radius: 4px;
+    color: whitesmoke;
+    background-color: darkslategray;
+}
+
+/* * * * * WRAPPER * * * * */
+
+#wrapper {
+    box-sizing: border-box;
+    width: 90vw;
+    margin: 0 auto;
+    padding: 1em;
+}
+
+/* * * * * NAVBAR * * * * */
+
+.navbar {
+    margin: 0;   /* bootstrap override */
+}
+
+#JS_menuLogin {
+    display: none;
+}
+
+.dropdown-menu {
+    left: auto;
+    right: 0;
+}
+
+/* * * * * HEADER * * * * */
+
+header {
+    background-color: #500;
+    margin: 0;
+    position: relative;
+    background-image: url('../../img/header-back.png');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: top right;
+    border-top: 1px solid #500;
+    border-bottom: 1px solid #500;
+}
+
+header.vino-header {
+    height: 400px;
+}
+
+header.bar-header {
+    height: 40px;
+}
+
+div.collector-border {
+    margin: 0px;
+    padding: 5px;
+    background-color: white;
+    width: 500px;
+    position: relative;
+    top: 150px;
+    left: 100px;
+    opacity: 0.9;
+}
+
+div.title-collector {
+    background-color: white;
+    margin: 0px;
+    padding: 10px;
+    border: 1px solid #500;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+div.title-collector h1 {
+    line-height: 1em;
+    font-size: 4em;
+    letter-spacing: 0.05em;
+    margin: 0;
+    padding: 10px;
+    color: #500;
+}
+
+div.title-collector h2 {
+    line-height: 1em;
+    font-size: 1.75em;
+    letter-spacing: 0.15em;
+    padding: 10px;
+    margin: 0;
+    color: #a55;
+}
+
+div.title-collector hr {
+    background-color: #500;
+    color: #500;
+    height: 1px;
+    margin: 20px auto;
+    padding: 0;
+    width: 80%;
+}
+
+/* * * * * DIV MAINBODY * * * * */
+
+div#mainbody {
+    margin: 0;
+    padding: 15px;
+}
+
+/* * * * * FLASHMESSAGE INFO * * * * */
+.infomsg {
+    border: 1px solid #060;
+    background-color: #cfc;
+    color: #060;
+    padding: 20px;
+}
