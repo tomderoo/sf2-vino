@@ -4,6 +4,10 @@ vino_pillar_homepage:
     path:     /
     defaults: { _controller: vinoPillarBundle:Default:index }
 
+vino_pillar_admin:
+    path:   /admin/index
+    defaults:   { _controller: vinoPillarBundle:Default:index }
+
 vino_pillar_wijnen:
     path:       /wijnen
     defaults:   { _controller: vinoPillarBundle:Product:wijnlijst }
@@ -21,17 +25,46 @@ vino_pillar_contact:
     path:       /contact
     defaults:   { _controller: vinoPillarBundle:Default:contact }
     
-vino_pillar_login:
+login:
     path:       /login
     defaults:   { _controller: vinoPillarBundle:Default:login }
 
-vino_pillar_logout:
+login_check:
+    path:       /login_check
+    
+vino_pillar_login_process:
+    path:       /loginprocess
+    defaults:   { _controller: vinoPillarBundle:Default:loginProcess }
+
+vino_pillar_register_process:
+    path:       /registerprocess
+    defaults:   { _controller: vinoPillarBundle:Default:registerProcess }
+    
+logout:
     path:       /logout
     defaults:   { _controller: vinoPillarBundle:Default:logout }
 
+# mandje functies
+vino_pillar_mandje:
+    path:       /mandje
+    defaults:   { _controller: vinoPillarBundle:Mandje:bekijkMandje }
+    
+vino_pillar_ledig:
+    path:       /ledig
+    defaults:   { _controller: vinoPillarBundle:Mandje:ledigMandje }
+
 vino_pillar_productinmandje:
     path:       /inmandje/{slug}
-    defaults:   { _controller: vinoPillarBundle:Mandje:inmandje }
+    #defaults:   { _controller: vinoPillarBundle:Mandje:inmandje }
+    defaults:   { _controller: vinoPillarBundle:Mandje:inBestelling }
+
+vino_pillar_killmandjelijn:
+    path:       /killmandjelijn/{slug}
+    defaults:   { _controller: vinoPillarBundle:Mandje:uitBestelling }
+    
+vino_pillar_checkout:
+    path:       /checkout
+    defaults:   { _controller: vinoPillarBundle:Default:index }
 
 # dummy functies
 vino_pillar_makedummy:

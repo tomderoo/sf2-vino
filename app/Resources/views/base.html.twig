@@ -12,6 +12,9 @@
             <link href='http://fonts.googleapis.com/css?family=PT+Sans+Narrow:400,700' rel='stylesheet' type='text/css'>
             {% stylesheets
                 'bootstrap/css/bootstrap.min.css'
+                'js/vendor/jquery-ui/jquery-ui.min.css'
+                'js/vendor/jquery-ui/jquery-ui.structure.min.css'
+                'js/vendor/jquery-ui/jquery-ui.theme.min.css'
                 'js/vendor/lightbox/css/lightbox.css'
                 'css/*'
             %}
@@ -43,26 +46,43 @@
                                     <li><a href="{{ path('vino_pillar_contact') }}">Contact</a></li>
                                 </ul>
                             {% endblock %}
+                            {#
                             {% block navuser %}
-                                {% if user == "anon" %}
+                                {% if user == null %}
                                     <ul class="nav navbar-nav pull-right">
                                         <li class="dropdown" id="JS_menuLogin">
                                             <a class="dropdown-toggle" href="#" data-toggle="dropdown" id="navLogin">Login</a>
                                             <div class="dropdown-menu" style="padding:17px;">
                                                 <form class="form" id="formLogin"> 
-                                                    <input name="username" id="username" type="text" placeholder="E-mail">
-                                                    <input name="password" id="password" type="password" placeholder="Paswoord"><br>
-                                                    <button type="button" id="btnLogin" class="btn">Login</button>
+                                                    <input class="form-control" name="username" id="username" type="text" placeholder="E-mail">
+                                                    <input class="form-control" name="password" id="password" type="password" placeholder="Paswoord"><br>
+                                                    <input type="submit" value="Login">
                                                 </form>
+                                                <hr>
+                                                <p><a href="{{ path('vino_pillar_login') }}">Nieuwe klant?</a></p>
                                             </div>
                                         </li>
                                         <li id="NOJS_menuLogin"><a href="{{ path('vino_pillar_login') }}">Login</a></li>
                                     </ul>
                                 {% else %}
                                     <ul class="nav navbar-nav pull-right">
-                                        <li><a href="{{ path('vino_pillar_logout') }}">Logout '{{ user }}'</a></li>
+                                        <li><a href="{{ path('vino_pillar_logout') }}">Logout '{{ user.email }}'</a></li>
                                     </ul>
                                 {% endif %}
+                            {% endblock %}
+                            #}
+                            {% block navuser %}
+                                <ul class="nav navbar-nav pull-right">
+                                {% if mandje is defined and mandje != null %}
+                                    <li><a href="{{ path('vino_pillar_mandje') }}">Mandje</a></li>
+                                {% endif %}
+                                {% if app.user %}
+                                    <li><a href="#">{{ app.user.username }}</a></li>
+                                    <li><a href="{{ path('logout') }}">Uitloggen</a></li>
+                                {% else %}
+                                    <li><a href="{{ path('login') }}">Login</a></li>
+                                {% endif %}
+                                </ul>
                             {% endblock %}
                         </div>
                     </div>
@@ -76,12 +96,29 @@
             <div id="mainbody">
                 {% block flashinfo %}
                     {% for flashMessage in app.session.flashbag.get('infomsg') %}
-                        <p class="infomsg">
+                        <div class="alert alert-info" role="alert">
                             {{ flashMessage|raw }}
-                        </p>
+                        </div>
                     {% endfor %}
                 {% endblock %}
                 
+                {% block klant %}
+                    {% if app.user.id is defined %}
+                        <pre>
+                        {{ app.user.id }}
+                        </pre>
+                    {% endif %}
+                {% endblock %}
+                {#
+                {% block mandje %}
+                    {% if mandje is defined %}
+                        Mandje is defined
+                        <pre>
+                        {{ dump(mandje) }}
+                        </pre>
+                    {% endif %}
+                {% endblock %}
+                #}
                 {% block body %}{% endblock %}
             </div>
 
@@ -90,6 +127,7 @@
         {% block javascripts %}
             {% javascripts
                 'js/vendor/jquery/jquery-1.11.1.min.js'
+                'js/vendor/jquery-ui/jquery-ui.min.js'
                 'bootstrap/js/bootstrap.min.js'
                 'js/vendor/validate/dist/jquery.validate.min.js'
                 'js/vendor/serializeobject/jquery.serialize-object.js'

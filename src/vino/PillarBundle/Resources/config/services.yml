@@ -5,3 +5,8 @@ services:
 #    vino_pillar.example:
 #        class: %vino_pillar.example.class%
 #        arguments: [@service_id, "plain_value", %parameter%]
+    vino_pillar.type.klant_field:
+        class: vino\PillarBundle\Form\Type\KlantFieldType
+        arguments: ["@doctrine.orm.entity_manager"]
+        tags:
+            - { name: form.type, alias: klant_field }

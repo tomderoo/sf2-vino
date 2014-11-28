@@ -12,6 +12,25 @@ use vino\PillarBundle\Entity\Review;
 
 class KlantController extends Controller {
     
+    public function loginKlant($email, $paswoord) {
+        $manager = $this->getDoctrine()->getManager();
+        
+        $db_klant = $manager->getRepository('vinoPillarBundle:Klant')->findOneByEmail($email);
+        
+        if (!$db_klant) {
+            // klant niet gevonden!
+            return false;
+        }
+        
+        if ($db_klant->getPaswoord() != $paswoord) {
+            // paswoord verkeerd!
+            return false;
+        } else {
+            // klant is succesvol ingelogd
+            return true;
+        }
+    }
+    
     public function maakDummyKlant() {
         $manager = $this->getDoctrine()->getManager();
         

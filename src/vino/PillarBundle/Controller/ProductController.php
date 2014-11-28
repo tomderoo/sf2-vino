@@ -8,6 +8,11 @@ use Symfony\Component\HttpFoundation\Request;
 use vino\PillarBundle\Entity\Wijn;
 use vino\PillarBundle\Entity\Categorie;
 use vino\PillarBundle\Entity\Land;
+use vino\PillarBundle\Entity\Review;
+//use Symfony\Component\Form\AbstractType;          // krijg ik niet aan de praat, en is ook niet nodig
+//use Symfony\Component\Form\FormBuilderInterface;  // krijg ik niet aan de praat, en is ook niet nodig
+
+//use vino\PillarBundle\Form\DataTransformer\KlantToIdTransformer;
 
 class ProductController extends Controller {
     
@@ -18,19 +23,18 @@ class ProductController extends Controller {
     public function wijnlijstAction(Request $request) {
         // toont alle producten in de database
         
-        // verifieer de user
-        $session = $request->getSession();
-        
-        if (!$session->get('user')) {
-            // no user exists
-            $user = "anon";
-            $session->set('user', $user);
-        } else {
-            $user = $session->get('user');
-        }
-        
         // laadt Doctrine manager
         $em = $this->getDoctrine()->getManager();
+        
+        // laadt de sessie
+        $session = $request->getSession();
+        
+        // laadt het mandje
+        $mandje = $session->get('mandje');
+        
+        // laadt de user
+        //$user = \vino\PillarBundle\Functions\ServiceCollection::checkKlant($session, $em);
+        $user = $this->getUser();
         
         // zoek alle producten
         $productlijst = $em->getRepository('vinoPillarBundle:Wijn')->findAll();
@@ -53,6 +57,7 @@ class ProductController extends Controller {
         return $this->render('vinoPillarBundle:Product:productlijst.html.twig', array(
             'user' => $user,
             'productlijst' => $productlijst,
+            'mandje' => $mandje,
         ));
     }
     
@@ -61,19 +66,18 @@ class ProductController extends Controller {
     public function productdetailAction(Request $request, $slug) {
         // toont een productdetail op basis van een slug
         
-        // verifieer de user
-        $session = $request->getSession();
-        
-        if (!$session->get('user')) {
-            // no user exists
-            $user = "anon";
-            $session->set('user', $user);
-        } else {
-            $user = $session->get('user');
-        }
-        
         // laadt Doctrine manager
         $em = $this->getDoctrine()->getManager();
+        
+        // laadt de sessie
+        $session = $request->getSession();
+        
+        // laadt het mandje
+        $mandje = $session->get('mandje');
+        
+        // laadt de user
+        //$user = \vino\PillarBundle\Functions\ServiceCollection::checkKlant($session, $em);
+        $user = $this->getUser();
         
         // zoek het productdetail in de database op basis van de slug
         $product = $em->getRepository('vinoPillarBundle:Wijn')->findOneBySlug($slug);
@@ -88,6 +92,64 @@ class ProductController extends Controller {
             //return $this->redirect($this->generateUrl('vino_pillar_homepage'));
         }
         
+        // indien ingelogde gebruiker, laat form zien
+        if ($user) {
+            $review = new Review();
+            // importeren van "hidden" gegevens eigen aan de klant en het product
+            $review->setKlant($user);
+            $review->setWijn($product); // deze functie slaat enkel de entity op, zonder de sub-entities - why?
+            $review->setDatum(new \DateTime('today'));
+            
+            $formvisible = 1;   // zet de zichtbaarheid van het form
+            
+            // checken of deze klant reeds een review heeft ingevoerd
+            if ($em
+                    ->getRepository('vinoPillarBundle:Review')
+                    ->findOneBy(array( 'klant' => $user->getId(), 'wijn' => $product->getId()))
+                    ) {
+                $formvisible = 0;
+            }
+            
+            $form = $this->createFormBuilder($review)
+                    ->add('titel', 'text', array ('attr' => array('class' => 'form-control')))
+                    ->add('tekst', 'textarea', array ('attr' => array('class' => 'form-control')))
+                    ->add('rating', 'choice', array(
+                        'choices' => array(
+                            1 => '1 / 5 (slecht) ',
+                            2 => '2 / 5 (valt tegen) ',
+                            3 => '3 / 5 (gemiddeld) ',
+                            4 => '4 / 5 (goed) ',
+                            5 => '5 / 5 (fantastisch) '),
+                        'expanded' => true,
+                        'multiple' => false,
+                        //'attr' => array ( 'class' => 'radio'),
+                        ))
+                    ->add('save', 'submit', array('label' => 'Verstuur review'))
+                    ->getForm();
+            
+            $form->handleRequest($request);
+            
+            // indien sprake is van een ingediend form, doe dit
+            if ($form->isValid()) {
+                // voer acties uit voor een valide form: in database plaatsen
+                $em->persist($review);
+                $em->flush();
+                
+                // geef de melding weer
+                $infoMsg = 'Review succesvol toegevoegd!';
+                $this->get('session')
+                        ->getFlashBag()
+                        ->add('infomsg', $infoMsg);
+                
+                // disable de form (om geen dubbelposting toe te laten)
+                $formvisible = 0;
+            }
+            $form_view = $form->createView();
+        } else {
+            $form_view = null;
+            $formvisible = 0;
+        }
+        
         // zoek de bijhorende comments
         $reviews = $em->getRepository('vinoPillarBundle:Review')->findByWijn($product->getId());
         if (!$reviews) { $reviews = null; }
@@ -98,6 +160,9 @@ class ProductController extends Controller {
             'user' => $user,
             'product' => $product,
             'reviews' => $reviews,
+            'form' => $form_view,
+            'formvisible' => $formvisible,
+            'mandje' => $mandje,
         ));
     }
     

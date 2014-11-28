@@ -1,39 +1,58 @@
 security:
     encoders:
-        Symfony\Component\Security\Core\User\User: plaintext
+        #Symfony\Component\Security\Core\User\User: plaintext
+        Symfony\Component\Security\Core\User\User:
+            algorithm: bcrypt
+            cost: 8
+        vino\PillarBundle\Entity\Klant:
+            algorithm: bcrypt
+            cost: 8
 
     role_hierarchy:
-        ROLE_ADMIN:       ROLE_USER
+        ROLE_KLANT: ROLE_USER
+        ROLE_ADMIN:       ROLE_KLANT
         ROLE_SUPER_ADMIN: [ROLE_USER, ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH]
 
     providers:
+        chain_provider:
+            chain:
+                providers:  [in_memory, user_db]
         in_memory:
             memory:
                 users:
-                    user:  { password: userpass, roles: [ 'ROLE_USER' ] }
-                    admin: { password: adminpass, roles: [ 'ROLE_ADMIN' ] }
+                    #user:  { password: userpass, roles: [ 'ROLE_USER' ] }
+                    admin@sf.vino:
+                        password: $2a$08$Sjbvt60AKPtVtdeOgRddruNqudPCzavqY6s7a.qyfW5wzVBAGB4dy
+                        roles: 'ROLE_ADMIN'
+        user_db:
+            entity:
+                class: vino\PillarBundle\Entity\Klant
+                property: email
+                #roles: 'ROLE_USER'
 
     firewalls:
-        dev:
-            pattern:  ^/(_(profiler|wdt)|css|images|js)/
-            security: false
+        #dev:
+        #    pattern:  ^/(_(profiler|wdt)|css|images|js)/
+        #    security: false
 
         login:
-            pattern:  ^/demo/secured/login$
+            pattern:  ^/login$
             security: false
 
         secured_area:
-            pattern:    ^/demo/secured/
+            pattern:    ^/
             form_login:
-                check_path: _security_check
-                login_path: _demo_login
+                login_path: login
+                check_path: login_check
+                csrf_provider: form.csrf_provider
             logout:
-                path:   _demo_logout
-                target: _demo
-            #anonymous: ~
-            #http_basic:
-            #    realm: "Secured Demo Area"
+                path:   /logout
+                target: /
+            anonymous: ~
+            http_basic:
+                realm: "Klantenzone"
 
     access_control:
-        - { path: ^/demo/secured/hello/admin/, roles: ROLE_ADMIN }
+        - { path: ^/admin/, roles: ROLE_ADMIN }
+        - { path: ^/checkout, roles: ROLE_KLANT }
         #- { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }

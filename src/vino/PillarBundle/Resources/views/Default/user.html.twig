@@ -1,0 +1,31 @@
+{# src/vino/PillarBundle/Resources/views/Default/user.html.twig #}
+
+{% extends '::base.html.twig' %}
+
+{% block body %}
+    <h1>Klantenzone</h1>
+    {% if login_form != null %}
+        <div id="tabs">
+            <ul>
+                <li><a href="#loginform">Inloggen</a></li>
+                <li><a href="#regform">Registreren</a></li>
+            </ul>
+            <div id="loginform">
+                {{ form(login_form) }}
+            </div>
+            <div id="regform">
+                {{ form(reg_form) }}
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('#tabs').tabs();
+        });
+    </script>
+{% endblock %}

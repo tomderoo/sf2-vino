@@ -1,5 +1,9 @@
 {# src/vino/PillarBundle/Resources/views/Product/productdetail.html.twig #}
 
+{% if form %}
+    {% form_theme form 'vinoPillarBundle:Form:fields.html.twig' %}
+{% endif %}
+
 {% extends '::base.html.twig' %}
 
 {% block body %}
@@ -12,14 +16,53 @@
         <hr>
         <h3>Gebruikersreviews</h3>
         {% for review in reviews %}
-            <hr>
-            <p><b>{{ review.titel }}</b> (door <b>{{ review.klant.vNaam }} {{ review.klant.aNaam }}</b>)</p>
-            <p><i>Datum: {{ review.datum|date('d-m-Y') }}</i></p>
-            <blockquote>{{ review.tekst }}</blockquote>
-            <p><b>Rating: {{ review.rating }} / 5</b></p>
+            <div class="well">
+                <p><b>{{ review.titel }}</b> (door <b>{{ review.klant.vNaam }} {{ review.klant.aNaam }}</b>)</p>
+                <p><i>Datum: {{ review.datum|date('d-m-Y') }}</i></p>
+                <blockquote>{{ review.tekst }}</blockquote>
+                <p><b>Rating: {{ review.rating }} / 5</b></p>
+            </div>
         {% endfor %}
-    {% else %}
-        <hr>
-        <a href="{{ path('vino_pillar_dummyreview', {'slug': product.slug}) }}">Maak een dummyreview!</a>
     {% endif %}
+        <h3>Geef uw mening</h3>
+        <div class="well well-lg">
+            {% if app.user.id is defined %}
+                {% if formvisible == 1 %}
+                    {{ form_start(form) }}
+                        {{ form_errors(form) }}
+                        
+                        {# form_row(form.titel) #}
+                        <div class="form-group">
+                            {{ form_label(form.titel, 'Uw mening in één zin') }}
+                            {{ form_errors(form.titel) }}
+                            {{ form_widget(form.titel) }}
+                        </div>
+                        
+                        {# form_row(form.tekst) #}
+                        <div class="form-group">
+                            {{ form_label(form.tekst, 'Iets uitgebreidere bewoordingen...') }}
+                            {{ form_errors(form.tekst) }}
+                            {{ form_widget(form.tekst) }}
+                        </div>
+                        
+                        {# form_row(form.rating) #}
+                        <div class="form-group">
+                            {{ form_label(form.rating, 'Hoe zou u de wijn waarderen?') }}
+                            {{ form_errors(form.rating) }}
+                            {{ form_widget(form.rating) }}
+                        </div>
+                        
+                    {{ form_end(form) }}
+                {% else %}
+                    U kan slechts een review per wijn invoeren
+                {% endif %}
+            {% else %}
+                Log in om een review te maken
+            {% endif %}
+        </div>
+        <!--
+        <div class="well well-lg">
+            <a href="{{ path('vino_pillar_dummyreview', {'slug': product.slug}) }}">Maak een dummyreview!</a>
+        </div>
+        -->
 {% endblock %}

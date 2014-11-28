@@ -5,13 +5,14 @@ namespace vino\PillarBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;    // nodig om relatiemappings te kunnen maken
+use Symfony\Component\Security\Core\User\UserInterface; // nodig om gebruikers te authoriseren
 
 /**
  * @ORM\Entity
  * @ORM\Table(name="klant")
  */
 
-class Klant {
+class Klant implements UserInterface, \Serializable {
     
     /**
      * @ORM\Id
@@ -70,6 +71,11 @@ class Klant {
      */
     protected $level;
     
+    /**
+     * @ORM\Column(name="is_active", type="boolean")
+     */
+    protected $isActive;
+    
     // onderstaande zijn de relatiemappings naar tabellen waar "klant" een rol in speelt
     
     /**
@@ -85,6 +91,9 @@ class Klant {
     public function __construct() {
         $this->review = new ArrayCollection();
         $this->bestelling = new ArrayCollection();
+        $this->isActive = true;
+        // may not be needed, see section on salt
+        // $this->salt = md5(uniqid(null, true));
     }
 
 
@@ -283,6 +292,14 @@ class Klant {
     }
 
     /**
+     * @inheritDoc
+     */
+    public function getUsername()
+    {
+        return $this->email;
+    }
+    
+    /**
      * Set paswoord
      *
      * @param string $paswoord
@@ -301,6 +318,14 @@ class Klant {
      * @return string 
      */
     public function getPaswoord()
+    {
+        return $this->paswoord;
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    public function getPassword()
     {
         return $this->paswoord;
     }
@@ -392,5 +417,65 @@ class Klant {
     public function getBestelling()
     {
         return $this->bestelling;
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    public function getSalt()
+    {
+        // you *may* need a real salt depending on your encoder
+        // see section on salt below
+        return null;
+    }
+    
+    /**
+     * @inheritDoc
+     */
+    public function getRoles()
+    {
+        return array('ROLE_KLANT'); // hiermee definieer je de rol die deze entity moet opnemen in de security
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function eraseCredentials()
+    {
+    }
+
+    /**
+     * @see \Serializable::serialize()
+     */
+    public function serialize()
+    {
+        return serialize(array(
+            $this->id,
+            //$this->vNaam,
+            //$this->aNaam,
+            //$this->straat,
+            //$this->huisnr,
+            //$this->busnr,
+            //$this->postcode,
+            //$this->gemeente,
+            $this->email,
+            $this->paswoord,
+            // see section on salt below
+            // $this->salt,
+        ));
+    }
+
+    /**
+     * @see \Serializable::unserialize()
+     */
+    public function unserialize($serialized)
+    {
+        list (
+            $this->id,
+            $this->email,
+            $this->paswoord,
+            // see section on salt below
+            // $this->salt
+        ) = unserialize($serialized);
     }
 }

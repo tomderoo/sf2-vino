@@ -1,0 +1,41 @@
+# vino/PillarBundle/Resources/config/validation.yml
+vino\PillarBundle\Entity\Review:
+    properties:
+        klant:
+            - NotBlank: ~
+        wijn:
+            - NotBlank: ~
+        datum:
+            - NotBlank: ~
+            - Type: \DateTime
+        titel:
+            - NotBlank: ~
+        tekst:
+            - NotBlank: ~
+        rating:
+            - NotBlank: ~
+            - Type: integer
+            - Range:
+                min: 1
+                max: 5
+                
+vino\PillarBundle\Entity\Klant:
+    properties:
+        vNaam:
+            - NotBlank: ~
+        aNaam:
+            - NotBlank: ~
+        straat:
+            - NotBlank: ~
+        huisnr:
+            - NotBlank: ~
+        postcode:
+            - NotBlank: ~
+        gemeente:
+            - NotBlank: ~
+        email:
+            - NotBlank: ~
+            - Type: email
+        paswoord:
+            - NotBlank: ~
+        level:

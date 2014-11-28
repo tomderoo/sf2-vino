@@ -1,0 +1,64 @@
+{# src/vino/PillarBundle/Resources/views/Mandje/mandje.html.twig #}
+
+{% extends '::base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    
+    <link href="http://cdn.datatables.net/1.10.4/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css" media="screen" />
+{% endblock %}
+
+{% block body %}
+    <h1>Uw mandje</h1>
+    <hr>
+    {% if mandje is defined and mandje != null %}
+        <!--<div class="alert alert-info">Proficiat, u heeft een bestelmandje-variabele</div>-->
+        <table id="productlijst">
+            <thead>
+                <tr>
+                    <td>Aantal</td>
+                    <td>Naam</td>
+                    <td>Jaar</td>
+                    <!--<td>Land</td>-->    <!-- worden niet mee getoond wegens niet-persisted in de entity... -->
+                    <!--<td>Categorie</td>-->
+                    <td>Prijs</td>
+                    <td>&nbsp</td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for bestellijn in mandje.bestellijn %}
+                    <tr>
+                        <td>{{ bestellijn.aantal }}</td>
+                        <td>{{ bestellijn.wijn.naam }}</td>
+                        <td>{{ bestellijn.wijn.jaar }}</td>
+                        <!--<td>{{ bestellijn.wijn.land.naam }}</td>
+                        <td>{{ bestellijn.wijn.categorie.naam }}</td>-->
+                        <td>&euro; {{ (bestellijn.wijn.prijs / 100)|number_format(2) }}</td>
+                        <td>
+                            <a class="btn btn-default" href="{{ path('vino_pillar_wijndetail', {'slug': bestellijn.wijn.slug}) }}">Bekijk</a>
+                            <a class="btn btn-default" href="{{ path('vino_pillar_productinmandje', {'slug': bestellijn.wijn.slug}) }}">In mandje</a>
+                            <a class="btn btn-default" href="{{ path('vino_pillar_killmandjelijn', {'slug': bestellijn.wijn.slug}) }}">Verwijder</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <hr>
+        <a class="btn btn-success" href="{{ path('vino_pillar_checkout') }}">Bestellen</a>
+        <a class="btn btn-default" href="{{ path('vino_pillar_ledig') }}">Ledigen</a>
+    {% else %}
+        <p>Uw mandje is leeg...</p>
+    {% endif %}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    
+    <script src="http://cdn.datatables.net/1.10.4/js/jquery.dataTables.min.js" type="text/javascript"></script>
+    
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('#productlijst').DataTable();
+        });
+    </script>
+{% endblock %}
