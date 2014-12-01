@@ -101,14 +101,15 @@
                         </div>
                     {% endfor %}
                 {% endblock %}
-                
+                {#
                 {% block klant %}
                     {% if app.user.id is defined %}
                         <pre>
-                        {{ app.user.id }}
+                        De ingelogde user heeft als id: {{ app.user.id }}
                         </pre>
                     {% endif %}
                 {% endblock %}
+                #}
                 {#
                 {% block mandje %}
                     {% if mandje is defined %}

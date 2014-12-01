@@ -11,6 +11,13 @@
     <p>{{ product.omschrijving }}</p>
     <p>Categorie: {{ product.categorie.naam }}</p>
     <p>Afkomstig van {{ product.land.naam }}: {{ product.land.omschrijving }}</p>
+    <hr>
+    <div class="productdetail-prijs">
+        &euro; {{ (product.prijs/100)|number_format(2) }}
+    </div>
+    <div class="productdetail-actie">
+        <a class="btn btn-warning" href="{{ path('vino_pillar_productinmandje', {'slug': product.slug}) }}">In mandje</a>
+    </div>
     
     {% if reviews != null %}
         <hr>

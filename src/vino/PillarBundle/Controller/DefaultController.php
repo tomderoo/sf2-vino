@@ -166,7 +166,9 @@ class DefaultController extends Controller
         
         // als er reeds een user ingelogd is, wordt er geredirect naar de homepage
         if($this->getUser()) {
-            return $this->redirect($this->generateUrl('vino_pillar_homepage'));
+            //return $this->redirect($this->generateUrl('vino_pillar_homepage'));
+            $url = $this->getRequest()->headers->get("referer");
+            return $this->redirect($url);
         }
         
         // get the login error if there is one

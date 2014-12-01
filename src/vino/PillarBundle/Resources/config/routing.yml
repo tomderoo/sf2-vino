@@ -58,13 +58,25 @@ vino_pillar_productinmandje:
     #defaults:   { _controller: vinoPillarBundle:Mandje:inmandje }
     defaults:   { _controller: vinoPillarBundle:Mandje:inBestelling }
 
+vino_pillar_mandjeaantal:
+    path:       /mandjeaantal/{slug}/{aantal}
+    defaults:   { _controller: vinoPillarBundle:Mandje:mandjeAantal }
+
 vino_pillar_killmandjelijn:
     path:       /killmandjelijn/{slug}
     defaults:   { _controller: vinoPillarBundle:Mandje:uitBestelling }
+
+vino_pillar_inverpakking:
+    path:       /inverpakking/{slug}/{verpakking}
+    defaults:   { _controller: vinoPillarBundle:Mandje:inVerpakking }
+    
+vino_pillar_uitverpakking:
+    path:       /uitverpakking/{slug}/{verpakking}
+    defaults:   { _controller: vinoPillarBundle:Mandje:uitVerpakking }
     
 vino_pillar_checkout:
     path:       /checkout
-    defaults:   { _controller: vinoPillarBundle:Default:index }
+    defaults:   { _controller: vinoPillarBundle:Mandje:checkout }
 
 # dummy functies
 vino_pillar_makedummy:

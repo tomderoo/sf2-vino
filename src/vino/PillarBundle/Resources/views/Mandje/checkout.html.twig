@@ -1,4 +1,4 @@
-{# src/vino/PillarBundle/Resources/views/Mandje/mandje.html.twig #}
+{# src/vino/PillarBundle/Resources/views/Mandje/checkout.html.twig #}
 
 {% extends '::base.html.twig' %}
 
@@ -9,15 +9,23 @@
 {% endblock %}
 
 {% block body %}
-    <h1>Uw mandje</h1>
-    <hr>
+    <h1>Besteloverzicht</h1>
+    <div class="well">
+        <h3>Adresgegevens</h3>
+        <p>
+            {{ user.vNaam }}&nbsp;{{ user.aNaam }}<br>
+            {{ user.straat }}&nbsp;{{ user.huisnr }}{% if user.busnr != null or user.busnr != '' %}&nbsp;(bus {{ user.busnr }}){% endif %}<br>
+            {{ user.postcode }}&nbsp;{{ user.gemeente }}
+        </p>
+    </div>
+    <h3>Bestelling</h3>
     {% if mandje is defined and mandje != null %}
         <!--<div class="alert alert-info">Proficiat, u heeft een bestelmandje-variabele</div>-->
-        {#<div class="alert alert-info">Mandje variabele:
+        <!--<div class="alert alert-info">Mandje variabele:
             <pre>
             {{ dump(mandje) }}
             </pre>
-        </div>#}
+        </div>-->
         <table class="productlijst" border="1">
             <thead>
                 <tr>
@@ -25,7 +33,6 @@
                     <td>Naam</td>
                     <td>Jaar</td>
                     <td>Prijs / stuk</td>
-                    <td>Acties</td>
                     <td>Subtotaal</td>
                 </tr>
             </thead>
@@ -38,17 +45,11 @@
                         <td>{{ bestellijn.wijn.jaar }}</td>
                         <td>&euro; {{ (bestellijn.wijn.prijs / 100)|number_format(2) }}</td>
                         <td>
-                            <a class="btn btn-default" href="{{ path('vino_pillar_wijndetail', {'slug': bestellijn.wijn.slug}) }}">Detail</a>
-                            <a class="btn btn-warning" href="{{ path('vino_pillar_mandjeaantal', {'slug': bestellijn.wijn.slug, 'aantal': 1}) }}">+&nbsp;1</a>
-                            <a class="btn btn-warning" href="{{ path('vino_pillar_mandjeaantal', {'slug': bestellijn.wijn.slug, 'aantal': -1}) }}">-&nbsp;1</a>
-                            <a class="btn btn-danger" href="{{ path('vino_pillar_killmandjelijn', {'slug': bestellijn.wijn.slug}) }}">X</a>
-                        </td>
-                        <td>
                             &euro; {{ (bestellijn.wijn.prijs * bestellijn.aantal / 100)|number_format(2) }}
                         </td>
                     </tr>
                     <tr class="productlijst-verpakkinglijn-info-top">
-                        <td colspan="6">
+                        <td colspan="5">
                             Verpakking
                         </td>
                     </tr>
@@ -56,7 +57,6 @@
                         <td>Aantal</td>
                         <td colspan="2">Omschrijving</td>
                         <td>Prijs / stuk</td>
-                        <td>Acties</td>
                         <td>Subtotaal</td>
                     </tr>
                     {% set aantalVerpakteFlessen = 0 %}
@@ -73,7 +73,6 @@
                         <td>{{ (bestellijn.aantal - aantalVerpakteFlessen) }}</td>
                         <td colspan="2">Losse fles</td>
                         <td>&euro; 0.00</td>
-                        <td>&nbsp;</td>
                         <td>&euro; 0.00</td>
                     </tr>
                     {% for verpakkingtype in verpakkinglijst %}
@@ -95,18 +94,6 @@
                             <td colspan="2">{{ verpakkingtype.naam }}</td>
                             <td>&euro; {{ (verpakkingtype.prijs / 100)|number_format(2) }}</td>
                             <td>
-                                {# Toon acties naargelang aantal onverpakte flessen #}
-                                {% set aantalOnverpakteFlessen = bestellijn.aantal - aantalVerpakteFlessen %}
-                                {#Verpakte flessen = {{ aantalVerpakteFlessen }}
-                                Onverpakte flessen = {{ aantalOnverpakteFlessen }}#}
-                                {% if verpakkingtype.aantalFlessen <= aantalOnverpakteFlessen %}
-                                    <a class="btn btn-warning" href="{{ path('vino_pillar_inverpakking', {'slug': bestellijn.wijn.slug, 'verpakking': verpakkingtype.id }) }}">+</a>
-                                {% endif %}
-                                {% if aantalVerpakking > 0 %}
-                                    <a class="btn btn-warning" href="{{ path('vino_pillar_uitverpakking', {'slug': bestellijn.wijn.slug, 'verpakking': verpakkingtype.id }) }}">-</a>
-                                {% endif %}
-                            </td>
-                            <td>
                                 {# Subtotaal van deze verpakkinglijn #}
                                 {% set subtotaalVerpakkinglijn = verpakkingtype.prijs * aantalVerpakking %}
                                 {# Dit toevoegen aan het subtotaal van de verpakking #}
@@ -116,27 +103,27 @@
                         </tr>
                     {% endfor %}
                     <tr class="productlijst-verpakkinglijn-subtotaal">
-                        <td colspan="5">Subtotaal verpakkingen</td>
+                        <td colspan="4">Subtotaal verpakkingen</td>
                         <td>&euro; {{ (subtotaalVerpakking / 100)|number_format(2) }}</td>
                     </tr>
                     {# Optellen van subtotalen voor deze bestellijn bij het geheel #}
                     {% set subtotaalBestelling = subtotaalBestelling + subtotaalVerpakking + (bestellijn.wijn.prijs * bestellijn.aantal) %}
                 {% endfor %}
                 <tr class="productlijst-bestelling-subtotaal">
-                    <td colspan="5">Subtotaal bestelling</td>
+                    <td colspan="4">Subtotaal bestelling</td>
                     <td>&euro; {{ (subtotaalBestelling / 100)|number_format(2) }}</td>
                 </tr>
             </tbody>
         </table>
         <hr>
-        <a class="btn btn-success" href="{{ path('vino_pillar_checkout') }}">Bestellen</a>
-        <a class="btn btn-default" href="{{ path('vino_pillar_ledig') }}">Ledigen</a>
+        <a class="btn btn-success" href="{{ path('vino_pillar_checkout') }}">Bevestig bestelling</a>
+        <a class="btn btn-default" href="{{ path('vino_pillar_mandje') }}">Terug naar mandje</a>
     {% else %}
-        <p>Uw mandje is leeg... Ga naar het <a href="{{ path('vino_pillar_wijnen') }}">wijnoverzicht</a> om aankopen te selecteren.</p>
+        <p>Uw mandje is leeg...</p>
     {% endif %}
 {% endblock %}
-{#
-{% block javascripts %}
+
+{#{% block javascripts %}
     {{ parent() }}
     
     <script src="http://cdn.datatables.net/1.10.4/js/jquery.dataTables.min.js" type="text/javascript"></script>
@@ -151,5 +138,4 @@
             ]});
     });
     </script>
-{% endblock %}
-#}
+{% endblock %}#}

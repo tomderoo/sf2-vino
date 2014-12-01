@@ -20,7 +20,7 @@
                 <td>Categorie</td>
                 <td>Prijs</td>
                 <td>Rating</td>
-                <td>&nbsp</td>
+                <td>&nbsp;</td>
             </tr>
         </thead>
         <tbody>
@@ -33,8 +33,8 @@
                     <td>&euro; {{ (product.prijs / 100)|number_format(2) }}</td>
                     <td>{{ product.rating }}</td>
                     <td>
-                        <a href="{{ path('vino_pillar_wijndetail', {'slug': product.slug}) }}">Bekijk</a> /
-                        <a href="{{ path('vino_pillar_productinmandje', {'slug': product.slug}) }}">In mandje</a>
+                        <a class="btn btn-default" href="{{ path('vino_pillar_wijndetail', {'slug': product.slug}) }}">Detail</a>
+                        <a class="btn btn-warning" href="{{ path('vino_pillar_productinmandje', {'slug': product.slug}) }}">In mandje</a>
                     </td>
                 </tr>
             {% endfor %}
@@ -49,7 +49,12 @@
     
     <script type="text/javascript">
         $(document).ready(function(){
-            $('#productlijst').DataTable();
+            $('#productlijst').DataTable({
+                    "order": [
+                [ 0, "asc"],
+                [ 1, "asc"],
+                [ 4, "asc"]
+            ]});
         });
     </script>
 {% endblock %}
