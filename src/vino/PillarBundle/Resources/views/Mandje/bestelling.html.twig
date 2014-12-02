@@ -1,0 +1,114 @@
+{# src/vino/PillarBundle/Resources/views/Mandje/bestelling.html.twig #}
+
+{% extends '::base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    
+    <link href="http://cdn.datatables.net/1.10.4/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css" media="screen" />
+{% endblock %}
+
+{% block body %}
+    <h1>Overzicht van bestaande bestelling</h1>
+    {% if bestelling is defined and bestelling != null %}
+        <div class="well">
+            <h3>Verzonden naar</h3>
+            <p>
+                {{ bestelling.klant.vNaam }}&nbsp;{{ bestelling.klant.aNaam }}<br>
+                {{ bestelling.klant.straat }}&nbsp;{{ bestelling.klant.huisnr }}{% if bestelling.klant.busnr != null or bestelling.klant.busnr != '' %}&nbsp;(bus {{ bestelling.klant.busnr }}){% endif %}<br>
+                {{ bestelling.klant.postcode }}&nbsp;{{ bestelling.klant.gemeente }}
+            </p>
+        </div>
+        <h3>Bestelling</h3>
+        <p>Besteld op: {{ bestelling.datum|date('d-m-Y') }}</p>
+{#        <div class="alert alert-info">Bestelling variabele:
+            <pre>
+            {{ dump(bestelling) }}
+            </pre>
+        </div>
+#}          <table class="productlijst" border="1">
+            <thead>
+                <tr>
+                    <td>Aantal</td>
+                    <td>Naam</td>
+                    <td>Jaar</td>
+                    <td>Prijs / stuk</td>
+                    <td>Subtotaal</td>
+                </tr>
+            </thead>
+            <tbody>
+                {% set subtotaalBestelling = 0 %}
+                {% for bestellijn in bestelling.bestellijn %}
+                    <tr class="productlijst-bestellijn">
+                        <td>{{ bestellijn.aantal }}</td>
+                        <td>{{ bestellijn.wijn.naam }}</td>
+                        <td>{{ bestellijn.wijn.jaar }}</td>
+                        <td>&euro; {{ (bestellijn.wijn.prijs / 100)|number_format(2) }}</td>
+                        <td>
+                            &euro; {{ (bestellijn.wijn.prijs * bestellijn.aantal / 100)|number_format(2) }}
+                        </td>
+                    </tr>
+                    <tr class="productlijst-verpakkinglijn-info-top">
+                        <td colspan="5">
+                            Verpakking
+                        </td>
+                    </tr>
+                    <tr class="productlijst-verpakkinglijn-info-sub">
+                        <td>Aantal</td>
+                        <td colspan="2">Omschrijving</td>
+                        <td>Prijs / stuk</td>
+                        <td>Subtotaal</td>
+                    </tr>
+                    <tr class="productlijst-verpakkinglijn-item">
+                        <td>{{ (bestellijn.aantal) }}</td>
+                        <td colspan="2">Losse fles</td>
+                        <td>&euro; 0.00</td>
+                        <td>&euro; 0.00</td>
+                    </tr>
+                    {% for verpakkingtype in bestellijn.verpakkinglijn %}
+                        <tr class="productlijst-verpakkinglijn-item">
+                            <td>
+                                {{ verpakkingtype.aantal }}
+                            </td>
+                            <td colspan="2">{{ verpakkingtype.verpakking.naam }}</td>
+                            <td>&euro; {{ (verpakkingtype.verpakking.prijs / 100)|number_format(2) }}</td>
+                            <td>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    <tr class="productlijst-verpakkinglijn-subtotaal">
+                        <td colspan="4">Subtotaal verpakkingen</td>
+                        <td>
+                        </td>
+                    </tr>
+                {% endfor %}
+                <tr class="productlijst-bestelling-subtotaal">
+                    <td colspan="4">Subtotaal bestelling</td>
+                    <td>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <hr>
+        -- Links... --
+    {% else %}
+        <p>Geen bestelling te tonen...</p>
+    {% endif %}
+{% endblock %}
+
+{#{% block javascripts %}
+    {{ parent() }}
+    
+    <script src="http://cdn.datatables.net/1.10.4/js/jquery.dataTables.min.js" type="text/javascript"></script>
+    
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('#productlijst').DataTable({
+                    "order": [
+                [ 1, "asc"],
+                [ 2, "asc"],
+                [ 3, "asc"]
+            ]});
+    });
+    </script>
+{% endblock %}#}

@@ -41,7 +41,7 @@ class Bestellijn {
     /**
      * @ORM\OneToMany(targetEntity="Verpakkinglijn", mappedBy="bestellijn")
      */
-    protected $verpakkinglijn;  // deze is nodig om aan te geven dat er many "bestellijn" bij one "verpakkinglijn" horen
+    protected $verpakkinglijn;  // deze is nodig om aan te geven dat er many "verpakkinglijn" bij one "bestellijn" horen
     
     public function __construct() {
         $this->verpakkinglijn = new ArrayCollection();

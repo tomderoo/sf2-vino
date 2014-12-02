@@ -1,4 +1,4 @@
-{# src/vino/PillarBundle/Resources/views/Mandje/checkout.html.twig #}
+{# src/vino/PillarBundle/Resources/views/Mandje/confirm.html.twig #}
 
 {% extends '::base.html.twig' %}
 
@@ -9,9 +9,9 @@
 {% endblock %}
 
 {% block body %}
-    <h1>Besteloverzicht</h1>
+    <h1>Dank voor uw bestelling</h1>
     <div class="well">
-        <h3>Adresgegevens</h3>
+        <h3>Verzonden naar</h3>
         <p>
             {{ user.vNaam }}&nbsp;{{ user.aNaam }}<br>
             {{ user.straat }}&nbsp;{{ user.huisnr }}{% if user.busnr != null or user.busnr != '' %}&nbsp;(bus {{ user.busnr }}){% endif %}<br>
@@ -19,13 +19,13 @@
         </p>
     </div>
     <h3>Bestelling</h3>
-    {% if mandje is defined and mandje != null %}
-        <!--<div class="alert alert-info">Proficiat, u heeft een bestelmandje-variabele</div>-->
-        <!--<div class="alert alert-info">Mandje variabele:
+    {% if bestelling is defined and bestelling != null %}
+        <p>Besteld op: {{ bestelling.datum|date('d-m-Y') }}</p>
+        <div class="alert alert-info">Bestelling variabele:
             <pre>
-            {{ dump(mandje) }}
+            {{ dump(bestelling) }}
             </pre>
-        </div>-->
+        </div>
         <table class="productlijst" border="1">
             <thead>
                 <tr>
@@ -38,7 +38,7 @@
             </thead>
             <tbody>
                 {% set subtotaalBestelling = 0 %}
-                {% for bestellijn in mandje.bestellijn %}
+                {% for bestellijn in bestelling.bestellijn %}
                     <tr class="productlijst-bestellijn">
                         <td>{{ bestellijn.aantal }}</td>
                         <td>{{ bestellijn.wijn.naam }}</td>
@@ -116,10 +116,9 @@
             </tbody>
         </table>
         <hr>
-        <a class="btn btn-success" href="{{ path('vino_pillar_confirm') }}">Bevestig bestelling</a>
-        <a class="btn btn-default" href="{{ path('vino_pillar_mandje') }}">Terug naar mandje</a>
+        -- Links... --
     {% else %}
-        <p>Uw mandje is leeg...</p>
+        <p>Geen bestelling te tonen...</p>
     {% endif %}
 {% endblock %}
 

@@ -220,6 +220,12 @@ class MandjeController extends Controller {
     }
     
     /* * * CHECKOUT: eerste fase voor het bevestigen van de bestelling * * */
+    /* In dit onderdeel moet worden geregeld:
+     * - checkout-aanroep
+     * - mogelijkheid om verpakking te kiezen
+     * - mogelijkheid om verzending te kiezen (NOG DOEN)
+     * - mogelijkheid om betalingsmogelijkheid te kiezen (NOG DOEN)
+     */
     
     public function checkoutAction(Request $request) {
         // verkrijg het mandje
@@ -241,6 +247,14 @@ class MandjeController extends Controller {
             $user = $this->getUser();
         }
         
+        // sessie klaarmaken voor confirm via flash
+        // maak flashmessage
+        $flashCheck = 'valar doheris';
+        //$infoMsg = serialize($product);
+        $this->get('session')
+                ->getFlashBag()
+                ->add('flashCheck', $flashCheck);
+        $this->get('session')->getFlashBag()->add('infomsg', 'Er is een flashCheck meegegeven');
         // toon de template
         return $this->render('vinoPillarBundle:Mandje:checkout.html.twig', array(
                 'user' => $user,
@@ -361,6 +375,109 @@ class MandjeController extends Controller {
         // laadt dezelfde pagina via een reload/redirect
         $url = $this->getRequest()->headers->get("referer");
         return $this->redirect($url);
+    }
+    
+    /* * * CONFIRM : bevestigen van bestelling, inschrijving in de database * * */
+    
+    public function confirmAction(Request $request) {
+        $em = $this->getDoctrine()->getManager();
+        
+        // laadt de sessie
+        $session = $request->getSession();
+        
+        // check het mandje
+        if (!$session->get('mandje')) {
+            return $this->redirect($this->generateUrl('vino_pillar_homepage'));
+        } else {
+            $mandje = $session->get('mandje');
+        }
+        
+        // checken of er een flashbericht is vanuit checkout
+        //$flashCheck = $this->get('session')->getFlashbag()->has('flashCheck');
+        if (!$this->get('session')->getFlashbag()->get('flashCheck')) {
+            //$infoMsg = 'Fout: aanroep zonder flash!';
+            //$this->get('session')
+            //        ->getFlashBag()
+            //        ->add('infomsg', $infoMsg);
+            return $this->redirect($this->generateUrl('vino_pillar_homepage'));
+        }
+        
+        // alles is in orde, zet de bestelling in de database, ledig het mandje, en geef een confirmatiebericht
+        // omwille van "cascade: persist"-issues is het onmogelijk om simpelweg het mandje (dat een entity
+        // van "bestelling" is met alles er op en er aan, in principe...) rechtstreeks naar de database te
+        // persisten en flushen. Het is noodzakelijk om een geheel nieuw mandje te vullen en de daartoe
+        // benodigde entities opnieuw op te vragen uit de database om ze er in te kunnen steken... Daartoe
+        // moeten ook de aparte en benodigde entities gepersist en geflusht worden in volgorde dat ze nodig
+        // zijn in verdere aanroepingen... Dus eerst de bestelling (omdat die later gerefereerd wordt in
+        // bestellijnen), dan de bestellijnen (omdat die later gerefereerd worden in verpakkinglijnen), dan
+        // de verpakkinglijnen... Ik zie niet in hoe dit een winst is tov oude rechtstreekse MySQL-aanroepingen.
+        // NOOT: het is blijkbaar niet nodig om apart te flushen, enkel om apart te persisten
+        // 
+        // maak een geheel nieuwe bestelling en vul het met de informatie uit het mandje
+        // STAP 1 : maak de bestelling
+        $nieuweBestelling = new Bestelling();
+        $user = $this->getUser();
+        $klant = $em->getRepository('vinoPillarBundle:Klant')->findOneById($user->getId());
+        $nieuweBestelling->setKlant($klant);
+        $nieuweBestelling->setDatum(new \DateTime());
+        $em->persist($nieuweBestelling);
+        //$em->flush();
+        // vind de id van de bestelling
+        //$bestellingID = $nieuweBestelling->getId();
+        // STAP 2: maak de bestellijnen
+        foreach($mandje->getBestellijn() as $bestellijn) {
+            $nieuweBestellijn = new Bestellijn();
+            $nieuweBestellijn->setAantal($bestellijn->getAantal());
+            $deWijn = $em->getRepository('vinoPillarBundle:Wijn')->findOneById($bestellijn->getWijn()->getId());
+            $nieuweBestellijn->setWijn($deWijn);
+            $nieuweBestellijn->setBestelling($nieuweBestelling);
+            $em->persist($nieuweBestellijn);
+            //$em->flush();
+            // vind de id van de bestellijn
+            //$bestellijnID = $nieuweBestellijn->getId();
+            // STAP 3 : maak de verpakkinglijn
+            foreach($bestellijn->getVerpakkinglijn() as $verpakkinglijn) {
+                $nieuweVerpakkinglijn = new Verpakkinglijn();
+                $nieuweVerpakkinglijn->setAantal($verpakkinglijn->getAantal());
+                $deVerpakking = $em->getRepository('vinoPillarBundle:Verpakking')->findOneById($verpakkinglijn->getVerpakking()->getId());
+                $nieuweVerpakkinglijn->setVerpakking($deVerpakking);
+                $nieuweVerpakkinglijn->setBestellijn($nieuweBestellijn);
+                $em->persist($nieuweVerpakkinglijn);
+                //$em->flush();
+            }
+        }
+        $em->flush();
+        
+        // deze ingevoerde bestelling klaarmaken voor view
+        $bestellingID = $nieuweBestelling->getId();
+        $teTonenBestelling = $em->getRepository('vinoPillarBundle:Bestelling')->findOneById($bestellingID);
+        
+        // het mandje ledigen
+        $session->set('mandje', null);
+        
+        // maak flashmessage
+        $infoMsg = 'Uw bestelling werd succesvol geplaatst!';
+        $this->get('session')
+                ->getFlashBag()
+                ->add('infomsg', $infoMsg);
+        return $this->redirect($this->generateUrl('vino_pillar_homepage'));
+        /*return $this->render('vinoPillarBundle:Mandje:confirm.html.twig', array(
+                'user' => $user,
+                'mandje' => null,
+                'bestelling' => $teTonenBestelling,
+            ));*/
+    }
+    
+    public function toonBestellingAction($id) {
+        $em = $this->getDoctrine()->getManager();
+        
+        // laadt de bestelling
+        $teTonenBestelling = $em->getRepository('vinoPillarBundle:Bestelling')->findOneById($id);
+        return $this->render('vinoPillarBundle:Mandje:bestelling.html.twig', array(
+                'user' => $this->getUser(),
+                'mandje' => $this->getRequest()->getSession()->get('mandje'),
+                'bestelling' => $teTonenBestelling,
+            ));
     }
     
     /* * * * * CALLABLES * * * * */

@@ -104,8 +104,9 @@
                 {#
                 {% block klant %}
                     {% if app.user.id is defined %}
+                        User is defined
                         <pre>
-                        De ingelogde user heeft als id: {{ app.user.id }}
+                        Met user id: {{ app.user.id }}
                         </pre>
                     {% endif %}
                 {% endblock %}

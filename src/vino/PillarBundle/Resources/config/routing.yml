@@ -77,6 +77,14 @@ vino_pillar_uitverpakking:
 vino_pillar_checkout:
     path:       /checkout
     defaults:   { _controller: vinoPillarBundle:Mandje:checkout }
+    
+vino_pillar_confirm:
+    path:       /confirm
+    defaults:   { _controller: vinoPillarBundle:Mandje:confirm }
+
+vino_pillar_toonbestelling:
+    path:       /bestelling/{id}
+    defaults:   { _controller: vinoPillarBundle:Mandje:toonBestelling }
 
 # dummy functies
 vino_pillar_makedummy:
