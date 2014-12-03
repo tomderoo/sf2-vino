@@ -13,9 +13,6 @@ class DefaultController extends Controller
 {
     public function indexAction(Request $request)
     {
-        // laadt Doctrine manager
-        $em = $this->getDoctrine()->getManager();
-        
         // laadt de sessie
         $session = $request->getSession();
         

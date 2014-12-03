@@ -12,4 +12,7 @@ use Doctrine\ORM\EntityRepository;
  */
 class BestellingRepository extends EntityRepository
 {
+    public function findAllSortedById() {
+        return $this->findBy(array(), array('id' => 'ASC'));
+    }
 }

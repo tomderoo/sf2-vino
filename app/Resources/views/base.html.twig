@@ -44,6 +44,9 @@
                                     <li><a href="{{ path('vino_pillar_wijnen') }}">Wijnen</a></li>
                                     <li><a href="{{ path('vino_pillar_over-ons') }}">Over ons</a></li>
                                     <li><a href="{{ path('vino_pillar_contact') }}">Contact</a></li>
+                                    {% if app.user and app.user.username == 'admin@sf.vino' %}
+                                        <li class="active"><a href="{{ path('vino_pillar_admin') }}">Admin</a></li>
+                                    {% endif %}
                                 </ul>
                             {% endblock %}
                             {#

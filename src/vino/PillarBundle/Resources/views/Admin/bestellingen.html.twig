@@ -1,0 +1,78 @@
+{# src/vino/PillarBundle/Resources/views/Admin/bestellingen.html.twig #}
+
+{% extends '::base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    
+    <link href="http://cdn.datatables.net/1.10.4/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css" media="screen" />
+{% endblock %}
+
+{% block body %}
+    <h1>Overzicht bestellingen</h1>
+    <hr>
+    <table class="bestellinglijst">
+        <thead>
+            <tr>
+                <td>Klant - Naam</td>
+                <td>Klant - E-mail</td>
+                <td>Datum</td>
+                <td>Leverwijze</td>
+                <td>Totaalbedrag</td>
+                <td>Bestelstatus</td>
+                <td>Acties</td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for bestelling in bestellingen %}
+                {% set totaalprijs = 0 %}
+                {% set flessen = 0 %}
+                {# berekening totaalprijs #}
+                {% for bestellijn in bestelling.bestellijn %}
+                    {% set totaalprijs = totaalprijs + (bestellijn.aantal * bestellijn.wijn.prijs) %}
+                    {% set flessen = flessen + bestellijn.aantal %}
+                    {% for verpakkinglijn in bestellijn.verpakkinglijn %}
+                        {% set totaalprijs = totaalprijs + (verpakkinglijn.aantal * verpakkinglijn.verpakking.prijs) %}
+                    {% endfor %}
+                {% endfor %}
+                {% if flessen < 4 %}
+                    {% set totaalprijs = totaalprijs + 300 %}
+                {% endif %}
+                <tr>
+                    <td>{{ bestelling.klant.aNaam }}, {{ bestelling.klant.vNaam }}</td>
+                    <td>{{ bestelling.klant.email }}</td>
+                    <td>{{ bestelling.datum|date('d-m-Y H:m:s') }}</td>
+                    <td>
+                        {% if bestelling.leverwijze == 0 %}Afhaling{% else %}Thuislevering{% endif %}
+                    </td>
+                    <td>&euro; {{ (totaalprijs / 100)|number_format(2) }}</td>
+                    <td>
+                        {% if bestelling.bestelstatus == 0 %}
+                            <b style="color:red">Onverwerkt</b>
+                        {% else %}
+                            <b style="color: green">Verwerkt</b>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a class="btn btn-default" href="{{ path('vino_pillar_toonbestelling', {'id': bestelling.id}) }}">Detail</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    
+    <script src="http://cdn.datatables.net/1.10.4/js/jquery.dataTables.min.js" type="text/javascript"></script>
+    
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('.bestellinglijst').DataTable({
+                    "order": [
+                [ 2, "asc"]
+            ]});
+        });
+    </script>
+{% endblock %}

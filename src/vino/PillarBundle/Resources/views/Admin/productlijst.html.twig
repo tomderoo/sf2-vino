@@ -1,4 +1,4 @@
-{# src/vino/PillarBundle/Resources/views/Product/productlijst.html.twig #}
+{# src/vino/PillarBundle/Resources/views/Admin/productlijst.html.twig #}
 
 {% extends '::base.html.twig' %}
 
@@ -33,13 +33,16 @@
                     <td>&euro; {{ (product.prijs / 100)|number_format(2) }}</td>
                     <td>{{ product.rating|number_format(2) }}</td>
                     <td>
-                        <a class="btn btn-default" href="{{ path('vino_pillar_wijndetail', {'slug': product.slug}) }}">Detail</a>
-                        <a class="btn btn-warning" href="{{ path('vino_pillar_productinmandje', {'slug': product.slug}) }}">In mandje</a>
+                        <a class="btn btn-default" href="{{ path('vino_pillar_adminwijndetail', {'id': product.id}) }}">Detail</a>
+                        <a class="btn btn-warning" href="{{ path('vino_pillar_bewerkwijn', {'id': product.id}) }}">Bewerk</a>
+                        <a class="btn btn-danger" href="{{ path('vino_pillar_verwijderwijn', {'id': product.id}) }}">Verwijder</a>
                     </td>
                 </tr>
             {% endfor %}
         </tbody>
     </table>
+    <hr>
+    <p><a class="btn btn-warning" href="{{ path('vino_pillar_nieuwewijn') }}">Voeg een nieuwe wijn toe</a></p>        
 {% endblock %}
 
 {% block javascripts %}

@@ -32,6 +32,11 @@
             <tbody>
                 {% set subtotaalBestelling = 0 %}
                 {% for bestellijn in mandje.bestellijn %}
+                    <tr class="productlijst-verpakkinglijn-info-top">
+                        <td colspan="5">
+                            Product
+                        </td>
+                    </tr>
                     <tr class="productlijst-bestellijn">
                         <td>{{ bestellijn.aantal }}</td>
                         <td>{{ bestellijn.wijn.naam }}</td>

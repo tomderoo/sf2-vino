@@ -22,7 +22,7 @@ class Verpakkinglijn {
     
     /**
      * @ORM\ManyToOne(targetEntity="Bestellijn", inversedBy="verpakkinglijn")
-     * @ORM\JoinColumn(name="bestellijn_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="bestellijn_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $bestellijn;
     

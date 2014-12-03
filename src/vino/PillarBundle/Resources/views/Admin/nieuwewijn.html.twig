@@ -1,0 +1,73 @@
+{# src/vino/PillarBundle/Resources/views/Admin/nieuwewijn.html.twig #}
+
+{% if form %}
+    {% form_theme form 'vinoPillarBundle:Form:fields.html.twig' %}
+{% endif %}
+
+{% extends '::base.html.twig' %}
+
+{% block body %}
+    <h1>Wijn toevoegen in de database</h1>
+    <div class="well well-lg">
+        {% if form is defined %}
+            {{ form_start(form) }}
+                {{ form_errors(form) }}
+
+                {# form_row(form.naam) #}
+                <div class="form-group">
+                    {{ form_label(form.naam, 'Naam', {'label_attr': {'class': 'col-sm-2 control-label'}}) }}
+                    <div class="col-sm-10">
+                    {{ form_errors(form.naam) }}
+                    {{ form_widget(form.naam) }}
+                    </div>
+                </div>
+
+                {# form_row(form.jaar) #}
+                <div class="form-group">
+                    {{ form_label(form.jaar, 'Jaartal', {'label_attr': {'class': 'col-sm-2 control-label'}}) }}
+                    <div class="col-sm-2">
+                    {{ form_errors(form.jaar) }}
+                    {{ form_widget(form.jaar) }}
+                    </div>
+                </div>
+
+                {# form_row(form.omschrijving) #}
+                <div class="form-group">
+                    {{ form_label(form.omschrijving, 'Omschrijving', {'label_attr': {'class': 'col-sm-2 control-label'}}) }}
+                    <div class="col-sm-10">
+                    {{ form_errors(form.omschrijving) }}
+                    {{ form_widget(form.omschrijving) }}
+                    </div>
+                </div>
+
+                {# form_row(form.categorie) #}
+                <div class="form-group">
+                    {{ form_label(form.categorie, 'Categorie', {'label_attr': {'class': 'col-sm-2 control-label'}}) }}
+                    <div class="col-sm-2">
+                    {{ form_errors(form.categorie) }}
+                    {{ form_widget(form.categorie) }}
+                    </div>
+                </div>
+
+                {# form_row(form.land) #}
+                <div class="form-group">
+                    {{ form_label(form.land, 'Land van afkomst', {'label_attr': {'class': 'col-sm-2 control-label'}}) }}
+                    <div class="col-sm-2">
+                    {{ form_errors(form.land) }}
+                    {{ form_widget(form.land) }}
+                    </div>
+                </div>
+                
+                {# form_row(form.prijs) #}
+                <div class="form-group">
+                    {{ form_label(form.prijs, 'Prijs (in eurocent)', {'label_attr': {'class': 'col-sm-2 control-label'}}) }}
+                    <div class="col-sm-2">
+                    {{ form_errors(form.prijs) }}
+                    {{ form_widget(form.prijs) }}
+                    </div>
+                </div>
+                    <div class="col-sm-2"></div>
+            {{ form_end(form) }}
+        {% endif %}
+    </div>
+{% endblock %}

@@ -37,8 +37,15 @@
                 </tr>
             </thead>
             <tbody>
+                {% set totaalFlessen = 0 %}
                 {% set subtotaalBestelling = 0 %}
                 {% for bestellijn in mandje.bestellijn %}
+                    {% set totaalFlessen = totaalFlessen + bestellijn.aantal %}
+                    <tr class="productlijst-verpakkinglijn-info-top">
+                        <td colspan="5">
+                            Product
+                        </td>
+                    </tr>
                     <tr class="productlijst-bestellijn">
                         <td>{{ bestellijn.aantal }}</td>
                         <td>{{ bestellijn.wijn.naam }}</td>
@@ -112,6 +119,48 @@
                 <tr class="productlijst-bestelling-subtotaal">
                     <td colspan="4">Subtotaal bestelling</td>
                     <td>&euro; {{ (subtotaalBestelling / 100)|number_format(2) }}</td>
+                </tr>
+                <tr class="productlijst-verzending-info-top">
+                    <td colspan="5">Leverwijze</td>
+                </tr>
+                <tr class="productlijst-verzending-keuze">
+                    <td>
+                        {% if mandje.leverwijze == 0 %}
+                            <a class="btn btn-warning" href="{{ path('vino_pillar_switchleverwijze') }}">Kies</a>
+                        {% else %}
+                            <b>Uw keuze ></b>
+                        {% endif %}
+                    </td>
+                    <td colspan="3">Levering aan huis</td>
+                    <td>
+                        {% set leverPrijs = 0 %}
+                        {% if totaalFlessen > 3 %}
+                            &euro; {{ leverPrijs|number_format(2) }}
+                        {% else %}
+                            {% set leverPrijs = 300 %}
+                            &euro; {{ (leverPrijs / 100)|number_format(2) }}
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr class="productlijst-verzending-keuze">
+                    <td>
+                        {% if mandje.leverwijze == 1 %}
+                            <a class="btn btn-warning" href="{{ path('vino_pillar_switchleverwijze') }}">Kies</a>
+                        {% else %}
+                            <b>Uw keuze ></b>
+                        {% endif %}
+                    </td>
+                    <td colspan="3">Afhaling in magazijn</td>
+                    <td>&euro; 0.00</td>
+                </tr>
+                <tr class="productlijst-eindtotaal">
+                    <td colspan="4">Eindtotaal</td>
+                    <td>
+                        {% if mandje.leverwijze == 1 %}
+                            {% set subtotaalBestelling = subtotaalBestelling + leverPrijs %}
+                        {% endif %}
+                        {{ (subtotaalBestelling / 100)|number_format(2) }}
+                    </td>
                 </tr>
             </tbody>
         </table>

@@ -39,3 +39,24 @@ vino\PillarBundle\Entity\Klant:
         paswoord:
             - NotBlank: ~
         level:
+            
+vino\PillarBundle\Entity\Wijn:
+    properties:
+        naam:
+            - NotBlank: ~
+        jaar:
+            - NotBlank: ~
+            - Type:
+                type: integer
+        land:
+            - NotBlank: ~
+        categorie:
+            - NotBlank: ~
+        omschrijving:
+            - NotBlank: ~
+        prijs:
+            - NotBlank: ~
+            - Type: integer
+            - Range:
+                min: 1
+                minMessage: Geen prijzen lager dan 1 eurocent

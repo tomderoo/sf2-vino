@@ -12,6 +12,8 @@ use vino\PillarBundle\Entity\Review;
 
 class KlantController extends Controller {
     
+    /* * * LOGIN KLANT : logt de klant in * * */
+    
     public function loginKlant($email, $paswoord) {
         $manager = $this->getDoctrine()->getManager();
         
@@ -31,6 +33,27 @@ class KlantController extends Controller {
         }
     }
     
+    /* * * BEKIJK KLANT : toont klantgegevens * * */
+    
+    public function bekijkKlantAction(Request $request) {
+        // checken of er wel een user is ingelogd, anders redirect
+        if (!$this->getUser()) {
+            $infoMsg = "Foutieve aanroep van de klantpagina";
+            // maak flashmessage
+            $this->get('session')
+                    ->getFlashBag()
+                    ->add('infomsg', $infoMsg);
+            return $this->redirect($this->generateUrl('vino_pillar_homepage'));
+        } else {
+            $user = $this->getUser();
+        }
+        
+        return $this->render('vinoPillarBundle:Klant:klant.html.twig', array(
+            'user' => $user,
+        ));
+    }
+    
+    /* * * * * DUMMY ACTIES : om testgegevens te maken * * * * */
     public function maakDummyKlant() {
         $manager = $this->getDoctrine()->getManager();
         

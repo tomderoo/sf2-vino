@@ -32,6 +32,16 @@ class Bestelling {
      */
     protected $datum;
     
+    /**
+     * @ORM\Column(type="smallint")
+     */
+    protected $leverwijze;
+    
+    /**
+     * @ORM\Column(type="smallint")
+     */
+    protected $bestelstatus;
+    
     // onderstaande zijn de relatiemappings naar tabellen waar "bestelling" een rol in speelt
     
     /**
@@ -130,5 +140,51 @@ class Bestelling {
     public function getBestellijn()
     {
         return $this->bestellijn;
+    }
+
+    /**
+     * Set leverwijze
+     *
+     * @param integer $leverwijze
+     * @return Bestelling
+     */
+    public function setLeverwijze($leverwijze)
+    {
+        $this->leverwijze = $leverwijze;
+
+        return $this;
+    }
+
+    /**
+     * Get leverwijze
+     *
+     * @return integer 
+     */
+    public function getLeverwijze()
+    {
+        return $this->leverwijze;
+    }
+
+    /**
+     * Set bestelstatus
+     *
+     * @param integer $bestelstatus
+     * @return Bestelling
+     */
+    public function setBestelstatus($bestelstatus)
+    {
+        $this->bestelstatus = $bestelstatus;
+
+        return $this;
+    }
+
+    /**
+     * Get bestelstatus
+     *
+     * @return integer 
+     */
+    public function getBestelstatus()
+    {
+        return $this->bestelstatus;
     }
 }

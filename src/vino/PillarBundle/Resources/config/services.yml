@@ -1,5 +1,6 @@
 parameters:
 #    vino_pillar.example.class: vino\PillarBundle\Example
+    vino.controller.product.class: vino\PillarBundle\Controller\ProductController
 
 services:
 #    vino_pillar.example:
@@ -10,3 +11,5 @@ services:
         arguments: ["@doctrine.orm.entity_manager"]
         tags:
             - { name: form.type, alias: klant_field }
+    vino_productcontroller:
+        class: "%vino.controller.product.class%"

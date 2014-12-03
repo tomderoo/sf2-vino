@@ -73,7 +73,11 @@ vino_pillar_inverpakking:
 vino_pillar_uitverpakking:
     path:       /uitverpakking/{slug}/{verpakking}
     defaults:   { _controller: vinoPillarBundle:Mandje:uitVerpakking }
-    
+
+vino_pillar_switchleverwijze:
+    path:       /switchlever
+    defaults:   { _controller: vinoPillarBundle:Mandje:switchLeverwijze }
+
 vino_pillar_checkout:
     path:       /checkout
     defaults:   { _controller: vinoPillarBundle:Mandje:checkout }
@@ -82,9 +86,50 @@ vino_pillar_confirm:
     path:       /confirm
     defaults:   { _controller: vinoPillarBundle:Mandje:confirm }
 
+# admin functies
+vino_pillar_admin:
+    path:       /admin
+    defaults:   { _controller: vinoPillarBundle:Admin:adminHome }
+
+vino_pillar_allewijnen:
+    path:       /admin/wijnen
+    defaults:   { _controller: vinoPillarBundle:Admin:alleWijnen }
+
+vino_pillar_adminwijndetail:
+    path:       /admin/wijnen/{id}
+    defaults:   { _controller: vinoPillarBundle:Admin:detailWijn }
+
+vino_pillar_nieuwewijn:
+    path:       /admin/nieuwewijn
+    defaults:   { _controller: vinoPillarBundle:Admin:nieuweWijn }
+    
+vino_pillar_bewerkwijn:
+    path:       /admin/bewerkwijn/{id}
+    defaults:   { _controller: vinoPillarBundle:Admin:bewerkWijn }
+
+vino_pillar_verwijderwijn:
+    path:       /admin/verwijderwijn/{id}
+    defaults:   { _controller: vinoPillarBundle:Admin:verwijderWijn }
+
+vino_pillar_verwijderreview:
+    path:       /admin/verwijderreview/{wijnid}/{id}
+    defaults:   { _controller: vinoPillarBundle:Admin:verwijderReview }
+
+vino_pillar_allebestellingen:
+    path:       /admin/bestelling
+    defaults:   { _controller: vinoPillarBundle:Admin:alleBestellingen }
+
 vino_pillar_toonbestelling:
-    path:       /bestelling/{id}
-    defaults:   { _controller: vinoPillarBundle:Mandje:toonBestelling }
+    path:       /admin/bestelling/{id}
+    defaults:   { _controller: vinoPillarBundle:Admin:toonBestelling }
+    
+vino_pillar_verwerkbestelling:
+    path:       /admin/verwerkbestelling/{id}
+    defaults:   { _controller: vinoPillarBundle:Admin:switchBestelstatus }
+
+vino_pillar_killbestelling:
+    path:       /admin/killbestelling/{id}
+    defaults:   { _controller: vinoPillarBundle:Admin:verwijderBestelling }
 
 # dummy functies
 vino_pillar_makedummy:

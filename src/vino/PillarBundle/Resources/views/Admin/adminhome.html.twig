@@ -1,0 +1,49 @@
+{# src/vino/PillarBundle/Resources/views/Default/contact.html.twig #}
+
+{% extends '::base.html.twig' %}
+
+{% block title %}Admin{% endblock %}
+
+{% block body %}
+    <h1>Administratiepagina</h1>
+    <div class="">
+        <div class="well col-md-6">
+            <h3>Wijnen</h3>
+            <ul>
+                <li><a href="{{ path('vino_pillar_allewijnen') }}">Overzicht wijnen</a>
+                    <ul>
+                        <li>Aanpassen</li>
+                        <li><a href="#">Toevoegen</a></li>
+                        <li>Verwijderen</li>
+                        <li>Reviews verwijderen</li>
+                    </ul>
+                </li>
+                <li><a href="">Overzicht categorieën</a>
+                    <ul>
+                        <li>Aanpassen</li>
+                        <li><a href="#">Toevoegen</a></li>
+                        <li>Verwijderen</li>
+                    </ul>
+                </li>
+                <li><a href="">Overzicht landen</a>
+                    <ul>
+                        <li>Aanpassen</li>
+                        <li><a href="#">Toevoegen</a></li>
+                        <li>Verwijderen</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        <div class="well col-md-6">
+            <h3>Bestellingen</h3>
+            <ul>
+                <li><a href="{{ path('vino_pillar_allebestellingen') }}">Overzicht bestellingen</a>
+                    <ul>
+                        <li>Verwerken</li>
+                        <li>Verwijderen</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+{% endblock %}

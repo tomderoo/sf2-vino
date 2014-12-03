@@ -1,0 +1,36 @@
+{# src/vino/PillarBundle/Resources/views/Admin/productdetail.html.twig #}
+
+{% extends '::base.html.twig' %}
+
+{% block body %}
+    <h1>{{ product.naam }} ({{ product.jaar }})</h1>
+    <p>{{ product.omschrijving }}</p>
+    <p>Categorie: {{ product.categorie.naam }}</p>
+    <p>Afkomstig van {{ product.land.naam }}: {{ product.land.omschrijving }}</p>
+    <hr>
+    <div class="productdetail-prijs">
+        &euro; {{ (product.prijs/100)|number_format(2) }}
+    </div>
+    <div class="productdetail-actie">
+        <a class="btn btn-default" href="{{ path('vino_pillar_allewijnen') }}">Overzicht wijnen</a>
+        <a class="btn btn-warning" href="{{ path('vino_pillar_bewerkwijn', {'id': product.id}) }}">Bewerk</a>
+        <a class="btn btn-danger" href="{{ path('vino_pillar_verwijderwijn', {'id': product.id}) }}">Verwijder</a>
+    </div>
+    
+    <hr>
+    {% if reviews != null %}
+        <h3>Gebruikersreviews</h3>
+        {% for review in reviews %}
+            <div class="well">
+                <p><b>'{{ review.titel }}'</b> (door <b>{{ review.klant.vNaam }} {{ review.klant.aNaam }}</b>)</p>
+                <p><i>Datum: {{ review.datum|date('d-m-Y') }}</i></p>
+                <blockquote>{{ review.tekst }}</blockquote>
+                <p><b>Rating: {{ review.rating }} / 5</b></p>
+                <hr>
+                <p><a class="btn btn-danger" href="{{ path('vino_pillar_verwijderreview', {'wijnid': product.id, 'id': review.id})}}">Verwijder deze review</a></p>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>Geen gebruikersreviews...</p>
+    {% endif %}
+{% endblock %}

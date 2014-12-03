@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\Request;
 use vino\PillarBundle\Entity\Bestelling;
 use vino\PillarBundle\Entity\Verpakkinglijn;
 use vino\PillarBundle\Entity\Bestellijn;
-use \stdClass;
+//use \stdClass;
 
 class MandjeController extends Controller {
     
@@ -99,6 +99,8 @@ class MandjeController extends Controller {
         if (!$session->get('mandje')) {
             // er is nog geen mandje
             $mandje = new Bestelling();
+            $mandje->setLeverwijze(0);
+            $mandje->setBestelstatus(0);
             $session->set('mandje', $mandje);
         } else {
             $mandje = $session->get('mandje');
@@ -223,7 +225,7 @@ class MandjeController extends Controller {
     /* In dit onderdeel moet worden geregeld:
      * - checkout-aanroep
      * - mogelijkheid om verpakking te kiezen
-     * - mogelijkheid om verzending te kiezen (NOG DOEN)
+     * - mogelijkheid om verzending te kiezen
      * - mogelijkheid om betalingsmogelijkheid te kiezen (NOG DOEN)
      */
     
@@ -377,6 +379,25 @@ class MandjeController extends Controller {
         return $this->redirect($url);
     }
     
+    /* * * LEVERWIJZE : alterneren in keuzes van leverwijze * * */
+    /* - value 0 : levering afhalen
+     * - value 1 : levering aan huis
+     */
+    public function switchLeverwijzeAction(Request $request) {
+        $mandje = $this->mandjeCheck($request);
+        $leverwijze = $mandje->getLeverwijze();
+        if ($leverwijze == 0) {
+            $mandje->setLeverwijze(1);
+        } else {
+            $mandje->setLeverwijze(0);
+        }
+        $session = $request->getSession();
+        $session->set('mandje', $mandje);
+        //$url = $this->getRequest()->headers->get("referer");
+        //return $this->redirect($url);
+        return $this->redirect($this->generateUrl('vino_pillar_checkout'));
+    }
+    
     /* * * CONFIRM : bevestigen van bestelling, inschrijving in de database * * */
     
     public function confirmAction(Request $request) {
@@ -420,6 +441,8 @@ class MandjeController extends Controller {
         $klant = $em->getRepository('vinoPillarBundle:Klant')->findOneById($user->getId());
         $nieuweBestelling->setKlant($klant);
         $nieuweBestelling->setDatum(new \DateTime());
+        $nieuweBestelling->setLeverwijze($mandje->getLeverwijze());
+        $nieuweBestelling->setBestelstatus(0);
         $em->persist($nieuweBestelling);
         //$em->flush();
         // vind de id van de bestelling
@@ -468,19 +491,18 @@ class MandjeController extends Controller {
             ));*/
     }
     
-    public function toonBestellingAction($id) {
-        $em = $this->getDoctrine()->getManager();
-        
-        // laadt de bestelling
-        $teTonenBestelling = $em->getRepository('vinoPillarBundle:Bestelling')->findOneById($id);
-        return $this->render('vinoPillarBundle:Mandje:bestelling.html.twig', array(
-                'user' => $this->getUser(),
-                'mandje' => $this->getRequest()->getSession()->get('mandje'),
-                'bestelling' => $teTonenBestelling,
-            ));
-    }
-    
     /* * * * * CALLABLES * * * * */
+    
+    /* * * MANDJE_CHECK : check het bestaan van het mandje, anders redirect * * */
+    public function mandjeCheck(Request $request) {
+        $session = $request->getSession();
+        if (!$session->get('mandje')) {
+            return $this->redirect($this->generateUrl('vino_pillar_homepage'));
+        } else {
+            $mandje = $session->get('mandje');
+        }
+        return $mandje;
+    }
     
     /* * * VERPAKKINGLIJST : returnt een overzicht van alle mogelijke verpakkingen * * */
     
