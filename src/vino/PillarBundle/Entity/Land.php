@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;    // nodig om relatiemappings te kunnen maken
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="vino\PillarBundle\Entity\Repository\LandRepository")
  * @ORM\Table(name="land")
  */
 

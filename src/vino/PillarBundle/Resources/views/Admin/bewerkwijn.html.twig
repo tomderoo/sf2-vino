@@ -1,13 +1,13 @@
-{# src/vino/PillarBundle/Resources/views/Admin/nieuwewijn.html.twig #}
-
+{# src/vino/PillarBundle/Resources/views/Admin/bewerkwijn.html.twig #}
+{#
 {% if form %}
     {% form_theme form 'vinoPillarBundle:Form:fields.html.twig' %}
 {% endif %}
-
+#}
 {% extends '::base.html.twig' %}
 
 {% block body %}
-    <h1>Wijn toevoegen aan de database</h1>
+    <h1>Wijn bewerken</h1>
     <div class="well well-lg">
         {% if form is defined %}
             {{ form_start(form) }}

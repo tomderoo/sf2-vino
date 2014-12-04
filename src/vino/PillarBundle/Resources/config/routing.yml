@@ -115,6 +115,38 @@ vino_pillar_verwijderreview:
     path:       /admin/verwijderreview/{wijnid}/{id}
     defaults:   { _controller: vinoPillarBundle:Admin:verwijderReview }
 
+vino_pillar_allecats:
+    path:       /admin/allecats
+    defaults:   { _controller: vinoPillarBundle:Admin:alleCats }
+    
+vino_pillar_nieuwecat:
+    path:       /admin/nieuwecat
+    defaults:   { _controller: vinoPillarBundle:Admin:nieuweCat }
+    
+vino_pillar_bewerkcat:
+    path:       /admin/bewerkcat/{id}
+    defaults:   { _controller: vinoPillarBundle:Admin:bewerkCat }
+    
+vino_pillar_verwijdercat:
+    path:       /admin/verwijdercat/{id}
+    defaults:   { _controller: vinoPillarBundle:Admin:verwijderCat }
+
+vino_pillar_allelanden:
+    path:       /admin/allelanden
+    defaults:   { _controller: vinoPillarBundle:Admin:alleLanden }
+    
+vino_pillar_nieuweland:
+    path:       /admin/nieuweland
+    defaults:   { _controller: vinoPillarBundle:Admin:nieuweLand }
+    
+vino_pillar_bewerkland:
+    path:       /admin/bewerkland/{id}
+    defaults:   { _controller: vinoPillarBundle:Admin:bewerkLand }
+    
+vino_pillar_verwijderland:
+    path:       /admin/verwijderland/{id}
+    defaults:   { _controller: vinoPillarBundle:Admin:verwijderLand }
+
 vino_pillar_allebestellingen:
     path:       /admin/bestelling
     defaults:   { _controller: vinoPillarBundle:Admin:alleBestellingen }
@@ -143,3 +175,8 @@ vino_pillar_dummyreview:
 vino_pillar_dummyklant:
     path:       /klantdummy
     defaults:   { _controller: vinoPillarBundle:Klant:dummyklant }
+    
+# tester
+vino_pillar_test:
+    path:       /test
+    defaults:   { _controller: vinoPillarBundle:Default:test }

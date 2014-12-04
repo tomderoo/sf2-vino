@@ -302,4 +302,47 @@ class DefaultController extends Controller
         $session->set('mandje', null);
         return $this->redirect($this->generateUrl('vino_pillar_homepage'));
     }
+    
+    /* * * * * TESTER * * * * */
+    public function testAction(Request $request) {
+        $session = $request->getSession();
+        $mandje = $session->get('mandje');
+        $user = $this->getUser();
+        
+        // We gaan uitzoeken hoe we een virtuele string tot iets anders kunnen maken met regexp toestanden
+        
+        $str = "Côtes du Rhône";
+        
+        // Lower case the string and remove whitespace from the beginning or end
+        $str = trim(strtolower($str));
+
+        // Remove single quotes from the string
+        $str = str_replace("'", '', $str);
+
+        // vervang accentkarakters door normale equivalenten
+        $matchArray = array(
+           "á" => "a",
+           "â" => "a",
+           "ô" => "o",
+        );
+
+        foreach($matchArray as $accented => $normal) {
+           $str = str_replace($accented, $normal, $str);
+        }
+        
+        //$str = preg_replace("[ô]", "o", $str);
+        //$str = preg_replace("/&([a-z])[a-z]+;/i", "$1",$str);
+
+        // Every character other than a-z, 0-9 will be replaced with a single dash (-)
+        $str = preg_replace("/[^a-z0-9]+/", "-", $str);
+
+        // Remove any beginning or trailing dashes
+        $str = trim($str, "-");
+
+        return $this->render('vinoPillarBundle:Default:test.html.twig', array(
+            'user' => $user,
+            'mandje' => $mandje,
+            'destring' => $str,
+        ));
+    }
 }

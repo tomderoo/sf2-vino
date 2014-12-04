@@ -5,6 +5,15 @@ use Symfony\Component\Config\Loader\LoaderInterface;
 
 class AppKernel extends Kernel
 {
+    /*
+     * getCharset() override in een poging om preg_replace correct te laten werken (zie AdminController slugThis() ), maar dat is mislukt
+     */
+    /*
+    public function getCharset() {
+        return 'ISO-8859-15';
+    }
+    */
+    
     public function registerBundles()
     {
         $bundles = array(

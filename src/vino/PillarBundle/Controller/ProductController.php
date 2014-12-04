@@ -92,8 +92,10 @@ class ProductController extends Controller {
             //return $this->redirect($this->generateUrl('vino_pillar_homepage'));
         }
         
-        // indien ingelogde gebruiker, laat form zien
-        if ($user) {
+        // laat form zien INDIEN:
+        // - gebruiker is ingelogd
+        // - gebruiker niet ROLE_ADMIN heeft
+        if ($user && !in_array("ROLE_ADMIN", $user->getRoles())) {
             $review = new Review();
             // importeren van "hidden" gegevens eigen aan de klant en het product
             $review->setKlant($user);
@@ -148,6 +150,8 @@ class ProductController extends Controller {
         } else {
             $form_view = null;
             $formvisible = 0;
+            //echo($user->getUsername());
+            //var_dump($user->getRoles());
         }
         
         // zoek de bijhorende comments

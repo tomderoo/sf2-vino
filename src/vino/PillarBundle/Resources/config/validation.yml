@@ -60,3 +60,17 @@ vino\PillarBundle\Entity\Wijn:
             - Range:
                 min: 1
                 minMessage: Geen prijzen lager dan 1 eurocent
+
+vino\PillarBundle\Entity\Categorie:
+    properties:
+        naam:
+            - NotBlank: ~
+        omschrijving:
+            - NotBlank: ~
+
+vino\PillarBundle\Entity\Land:
+    properties:
+        naam:
+            - NotBlank: ~
+        omschrijving:
+            - NotBlank: ~

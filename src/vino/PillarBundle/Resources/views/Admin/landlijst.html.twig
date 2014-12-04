@@ -1,0 +1,52 @@
+{# src/vino/PillarBundle/Resources/views/Admin/landlijst.html.twig #}
+
+{% extends '::base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    
+    <link href="http://cdn.datatables.net/1.10.4/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css" media="screen" />
+{% endblock %}
+
+{% block body %}
+    <h1>Overzicht landen</h1>
+    <hr>
+    <table id="productlijst">
+        <thead>
+            <tr>
+                <td>Naam</td>
+                <td>Omschrijving</td>
+                <td>&nbsp;</td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for cat in catlijst %}
+                <tr>
+                    <td>{{ cat.naam }}</td>
+                    <td>{{ cat.omschrijving }}</td>
+                    <td>
+                        <a class="btn btn-warning" href="{{ path('vino_pillar_bewerkland', {'id': cat.id}) }}"><span class="glyphicon glyphicon-trash"></span> Bewerk</a>
+                        <a class="btn btn-danger" href="{{ path('vino_pillar_verwijderland', {'id': cat.id}) }}">Verwijder</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <hr>
+    <p><a class="btn btn-warning" href="{{ path('vino_pillar_nieuweland') }}">Voeg een nieuw land toe</a></p>        
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    
+    <script src="http://cdn.datatables.net/1.10.4/js/jquery.dataTables.min.js" type="text/javascript"></script>
+    
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('#productlijst').DataTable({
+                    "order": [
+                [ 0, "asc"]
+            ]});
+        });
+    </script>
+{% endblock %}

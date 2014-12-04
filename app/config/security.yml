@@ -54,6 +54,7 @@ security:
 
     access_control:
         - { path: ^/admin/, roles: ROLE_ADMIN }
+        - { path: ^/admin, roles: ROLE_ADMIN }
         - { path: ^/checkout, roles: ROLE_KLANT }
         - { path: ^/confirm, roles: ROLE_KLANT }
         #- { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
