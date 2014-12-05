@@ -35,9 +35,11 @@ security:
         #    pattern:  ^/(_(profiler|wdt)|css|images|js)/
         #    security: false
 
-        login:
-            pattern:  ^/login$
-            security: false
+        # IK MOET DEZE FIREWALL UITCOMMENTEN... anders bestaat de user uit de andere niet in deze
+        #login:
+        #    pattern:  ^/login$
+        #    security: false
+            #anonymous: ~
 
         secured_area:
             pattern:    ^/

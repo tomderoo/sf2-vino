@@ -22,4 +22,8 @@ class ServiceCollection {
         return $user;
     }
     
+    public static function setMsg_Success($container, $msg) {
+        $container->get('session')->getFlashBag()->add('msg_success', $msg);
+    }
+    
 }

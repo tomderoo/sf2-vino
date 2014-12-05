@@ -63,10 +63,9 @@ class MandjeController extends Controller {
         
         // maak flashmessage
         $infoMsg = 'Uw mandje werd geledigd!';
-        //$infoMsg = serialize($product);
         $this->get('session')
                 ->getFlashBag()
-                ->add('infomsg', $infoMsg);
+                ->add('msg_info', $infoMsg);
         
         return $this->render('vinoPillarBundle:Mandje:mandje.html.twig', array(
                 'user' => $user,
@@ -83,11 +82,11 @@ class MandjeController extends Controller {
         // test de slug
         $product = $manager->getRepository('vinoPillarBundle:Wijn')->findOneBySlug($slug);
         if (!$product) {
-            $infoMsg = "De door u gekozen wijn kon niet worden teruggevonden en niet worden toegevoegd aan uw mandje!";
+            $infoMsg = "De door u gekozen wijn kon niet worden teruggevonden in de database en niet worden toegevoegd aan uw mandje!";
             // maak flashmessage
             $this->get('session')
                     ->getFlashBag()
-                    ->add('infomsg', $infoMsg);
+                    ->add('msg_error', $infoMsg);
             return $this->redirect($this->generateUrl('vino_pillar_wijnen'));
         }
         
@@ -133,12 +132,9 @@ class MandjeController extends Controller {
         
         // maak flashmessage
         $infoMsg = 'Product toegevoegd aan mandje!';
-        //$infoMsg = serialize($product);
         $this->get('session')
                 ->getFlashBag()
-                ->add('infomsg', $infoMsg);
-        // laadt nieuwe pagina via redirect
-        //return $this->redirect($this->generateUrl('vino_pillar_mandje'));
+                ->add('msg_success', $infoMsg);
         // laadt dezelfde pagina via een reload/redirect
         $url = $this->getRequest()->headers->get("referer");
         return $this->redirect($url);
@@ -155,9 +151,10 @@ class MandjeController extends Controller {
         // opvragen van alle bestellijnen
         $bestellijnArray = $mandje->getBestellijn();
         
+        $errormade = true;
         // doorlopen van de bestellijnen op zoek naar de slug
         // gebruik van een foreach-lus om "missing indexes" te vermijden (anders moet de array telkens
-        // gereset worden OF moet de ->removeBestellijn-functie worden herschreven in de entity
+        // gereset worden OF moet de ->removeBestellijn-functie worden herschreven in de entity)
         foreach($bestellijnArray as $lijnID => $dezeLijn) {
             if ($dezeLijn->getWijn()->getSlug() == $slug) {
                 $nuAantal = $dezeLijn->getAantal();
@@ -167,7 +164,12 @@ class MandjeController extends Controller {
                 } else {
                     $bestellijnArray[$lijnID]->setAantal($nieuwAantal);
                 }
+                $errormade = false;
             }
+        }
+        if ($errormade) {
+            $this->get('session')->getFlashBag()->add('msg_error', 'Deze opdracht kon niet worden uitgevoerd.');
+            return $this->redirect($this->generateUrl('vino_pillar_mandje'));
         }
         
         // mandje terugzetten
@@ -175,10 +177,9 @@ class MandjeController extends Controller {
         
         // maak flashmessage
         $infoMsg = 'Mandje aangepast!';
-        //$infoMsg = serialize($product);
         $this->get('session')
                 ->getFlashBag()
-                ->add('infomsg', $infoMsg);
+                ->add('msg_success', $infoMsg);
         
         return $this->redirect($this->generateUrl('vino_pillar_mandje'));
     }
@@ -193,6 +194,11 @@ class MandjeController extends Controller {
         
         // zoek de bestellijn
         $bestellijnArray = $mandje->getBestellijn();
+        
+        if (!$bestellijnArray) {
+            $this->get('session')->getFlashBag()->add('msg_error', 'Deze opdracht kon niet worden uitgevoerd.');
+            return $this->redirect($this->generateUrl('vino_pillar_mandje'));
+        }
         
         // als het de enige bestellijn is, doe je gewoon een ledig-functie
         if (count($bestellijnArray) <= 1) {
@@ -216,7 +222,7 @@ class MandjeController extends Controller {
         //$infoMsg = serialize($product);
         $this->get('session')
                 ->getFlashBag()
-                ->add('infomsg', $infoMsg);
+                ->add('msg_success', $infoMsg);
         
         return $this->redirect($this->generateUrl('vino_pillar_mandje'));
     }
@@ -226,7 +232,6 @@ class MandjeController extends Controller {
      * - checkout-aanroep
      * - mogelijkheid om verpakking te kiezen
      * - mogelijkheid om verzending te kiezen
-     * - mogelijkheid om betalingsmogelijkheid te kiezen (NOG DOEN)
      */
     
     public function checkoutAction(Request $request) {
@@ -251,17 +256,16 @@ class MandjeController extends Controller {
         
         // sessie klaarmaken voor confirm via flash
         // maak flashmessage
-        $flashCheck = 'valar doheris';
-        //$infoMsg = serialize($product);
+        $flashCheck = 'valar morghulis';
         $this->get('session')
                 ->getFlashBag()
                 ->add('flashCheck', $flashCheck);
-        $this->get('session')->getFlashBag()->add('infomsg', 'Er is een flashCheck meegegeven');
+        //$this->get('session')->getFlashBag()->add('infomsg', 'Er is een flashCheck meegegeven');
         // toon de template
         return $this->render('vinoPillarBundle:Mandje:checkout.html.twig', array(
                 'user' => $user,
                 'mandje' => $mandje,
-            'verpakkinglijst' => $this->verpakkingLijst(),
+                'verpakkinglijst' => $this->verpakkingLijst(),
             ));
     }
     
@@ -286,6 +290,11 @@ class MandjeController extends Controller {
             if ($mandjelijn->getWijn()->getSlug() == $slug) {
                 // laadt de verpakking die bij de verpakking-id hoort
                 $dezeVerpakking = $em->getRepository('vinoPillarBundle:Verpakking')->findOneById($verpakking);
+                if (!$dezeVerpakking) {
+                    // dit verpakkingstype bestaat niet, dus foute aanroep
+                    $this->get('session')->getFlashBag()->add('msg_error', 'Foute aanroep.');
+                    return $this->redirect($this->generateUrl('vino_pillar_mandje'));
+                }
                 // dit is de juiste bestellijn
                 foreach($mandjelijn->getVerpakkinglijn() as $verpakkinglijn) {
                     // we overlopen elke verpakkinglijn in de bestellijn
@@ -315,7 +324,7 @@ class MandjeController extends Controller {
         $infoMsg = 'Verpakking toegevoegd aan mandje!';
         $this->get('session')
                 ->getFlashBag()
-                ->add('infomsg', $infoMsg);
+                ->add('msg_success', $infoMsg);
         // laadt mandje via redirect
         //return $this->redirect($this->generateUrl('vino_pillar_mandje'));
         // laadt dezelfde pagina via een reload/redirect
@@ -345,13 +354,16 @@ class MandjeController extends Controller {
             if ($mandjelijn->getWijn()->getSlug() == $slug) {
                 // laadt de verpakking die bij de verpakking-id hoort
                 $dezeVerpakking = $em->getRepository('vinoPillarBundle:Verpakking')->findOneById($verpakking);
+                if (!$dezeVerpakking) {
+                    // dit verpakkingstype bestaat niet, dus foute aanroep
+                    $this->get('session')->getFlashBag()->add('msg_error', 'Foute aanroep.');
+                    return $this->redirect($this->generateUrl('vino_pillar_mandje'));
+                }
                 // dit is de juiste bestellijn
                 foreach($mandjelijn->getVerpakkinglijn() as $verpakkinglijn) {
                     // we overlopen elke verpakkinglijn in de bestellijn
                     if ($verpakkinglijn->getVerpakking()->getId() === $dezeVerpakking->getId()) {
-                        // we moeten vergelijken op VERPAKKING-ID, en niet op de entity VERPAKKING zelf, want
-                        // om de een of andere reden lukt dat niet...
-                        // ---
+                        // we moeten vergelijken op VERPAKKING-ID, en niet op de entity VERPAKKING zelf
                         // de verpakkinglijn bestaat, en dit is ze
                         $nuAantal = $verpakkinglijn->getAantal();
                         $nuAantal -= 1;
@@ -371,7 +383,7 @@ class MandjeController extends Controller {
         $infoMsg = 'Verpakking uit mandje verwijderd!';
         $this->get('session')
                 ->getFlashBag()
-                ->add('infomsg', $infoMsg);
+                ->add('msg_success', $infoMsg);
         // laadt mandje via redirect
         //return $this->redirect($this->generateUrl('vino_pillar_mandje'));
         // laadt dezelfde pagina via een reload/redirect
@@ -384,15 +396,22 @@ class MandjeController extends Controller {
      * - value 1 : levering aan huis
      */
     public function switchLeverwijzeAction(Request $request) {
-        $mandje = $this->mandjeCheck($request);
+        if (!$this->getUser() or !$request->getSession()->get('mandje')) {
+            $this->get('session')->getFlashBag()->add('msg_error', 'Foute aanroep.');
+            return $this->redirect($this->generateUrl('vino_pillar_homepage'));
+        }
+        $session = $request->getSession();
+        $mandje = $session->get('mandje');
         $leverwijze = $mandje->getLeverwijze();
         if ($leverwijze == 0) {
             $mandje->setLeverwijze(1);
+            $infoMsg = 'U hebt gekozen voor levering aan huis.';
         } else {
             $mandje->setLeverwijze(0);
+            $infoMsg = 'U hebt gekozen voor afhaling in het magazijn; we zetten de bestelling voor u klaar.';
         }
-        $session = $request->getSession();
         $session->set('mandje', $mandje);
+        $this->get('session')->getFlashBag()->add('msg_info', $infoMsg);
         //$url = $this->getRequest()->headers->get("referer");
         //return $this->redirect($url);
         return $this->redirect($this->generateUrl('vino_pillar_checkout'));
@@ -413,15 +432,12 @@ class MandjeController extends Controller {
             $mandje = $session->get('mandje');
         }
         
-        // checken of er een flashbericht is vanuit checkout
-        //$flashCheck = $this->get('session')->getFlashbag()->has('flashCheck');
+        // checken of er een flashbericht is vanuit checkout; indien niet, redirect
         if (!$this->get('session')->getFlashbag()->get('flashCheck')) {
-            //$infoMsg = 'Fout: aanroep zonder flash!';
-            //$this->get('session')
-            //        ->getFlashBag()
-            //        ->add('infomsg', $infoMsg);
             return $this->redirect($this->generateUrl('vino_pillar_homepage'));
         }
+        
+        //$tempBestelling = clone($mandje);
         
         // alles is in orde, zet de bestelling in de database, ledig het mandje, en geef een confirmatiebericht
         // omwille van "cascade: persist"-issues is het onmogelijk om simpelweg het mandje (dat een entity
@@ -440,13 +456,11 @@ class MandjeController extends Controller {
         $user = $this->getUser();
         $klant = $em->getRepository('vinoPillarBundle:Klant')->findOneById($user->getId());
         $nieuweBestelling->setKlant($klant);
+        //$tempBestelling->setKlant($klant);
         $nieuweBestelling->setDatum(new \DateTime());
         $nieuweBestelling->setLeverwijze($mandje->getLeverwijze());
         $nieuweBestelling->setBestelstatus(0);
         $em->persist($nieuweBestelling);
-        //$em->flush();
-        // vind de id van de bestelling
-        //$bestellingID = $nieuweBestelling->getId();
         // STAP 2: maak de bestellijnen
         foreach($mandje->getBestellijn() as $bestellijn) {
             $nieuweBestellijn = new Bestellijn();
@@ -455,9 +469,6 @@ class MandjeController extends Controller {
             $nieuweBestellijn->setWijn($deWijn);
             $nieuweBestellijn->setBestelling($nieuweBestelling);
             $em->persist($nieuweBestellijn);
-            //$em->flush();
-            // vind de id van de bestellijn
-            //$bestellijnID = $nieuweBestellijn->getId();
             // STAP 3 : maak de verpakkinglijn
             foreach($bestellijn->getVerpakkinglijn() as $verpakkinglijn) {
                 $nieuweVerpakkinglijn = new Verpakkinglijn();
@@ -466,29 +477,70 @@ class MandjeController extends Controller {
                 $nieuweVerpakkinglijn->setVerpakking($deVerpakking);
                 $nieuweVerpakkinglijn->setBestellijn($nieuweBestellijn);
                 $em->persist($nieuweVerpakkinglijn);
-                //$em->flush();
             }
         }
         $em->flush();
         
         // deze ingevoerde bestelling klaarmaken voor view
-        $bestellingID = $nieuweBestelling->getId();
-        $teTonenBestelling = $em->getRepository('vinoPillarBundle:Bestelling')->findOneById($bestellingID);
+        $id = $nieuweBestelling->getId();
+        /*
+         * Het laden van de teTonenBestelling op basis van de id verloopt onvolledig; de bestellijnen en
+         * verpakkingslijnen zijn er NIET bij! (Zelfs niet als het bovenstaande nieuweBestelling-object
+         * wordt gekloond!!!) Het lijkt alsof die niet meer bestaan of nog niet bestaan op het moment
+         * dat hieronder de aanroep wordt gedaan...
+         * Wat werkt allemaal niet;
+         * - het object uit de database laden (wordt maar half geladen)
+         * - nieuwe manager maken
+         * - de bestelling clonen (ook daar wordt enkel de klant en de bestelling getoond, niet de
+         * bestellijnen en verpakkingslijnen...)
+         * Wat werkt wel;
+         * - Het mandje clonen en dat laten zien
+         * - Een redirect naar een nieuwe route waar een nieuw php-proces begint waar dan volgens
+         * meegegeven id het object uit de database geladen wordt
+         * Wat werkt MISSCHIEN WEL:
+         * - Meerdere flush-aanroepingen hierboven!!!
+         */
+        //$teTonenBestelling = $em->getRepository('vinoPillarBundle:Bestelling')->findOneById($id);
+        $teTonenBestelling = clone($mandje);
+        $teTonenBestelling->setKlant($klant);
+        $teTonenBestelling->setDatum($nieuweBestelling->getDatum());
+        $teTonenBestelling->setBestelstatus(0);
+        if(!$teTonenBestelling) {
+            $this->get('session')->getFlashBag()->add('msg_error', 'Deze bestelling kon niet worden teruggevonden!');
+            return $this->redirect($this->generateUrl('vino_pillar_homepage'));
+        }
         
         // het mandje ledigen
-        $session->set('mandje', null);
+        //$session->set('mandje', null);
         
         // maak flashmessage
-        $infoMsg = 'Uw bestelling werd succesvol geplaatst!';
+        /*$infoMsg = 'Uw bestelling werd succesvol geplaatst!';
         $this->get('session')
                 ->getFlashBag()
-                ->add('infomsg', $infoMsg);
-        return $this->redirect($this->generateUrl('vino_pillar_homepage'));
-        /*return $this->render('vinoPillarBundle:Mandje:confirm.html.twig', array(
+                ->add('msg_success', $infoMsg);*/
+        //return $this->redirect($this->generateUrl('vino_pillar_afscheid', array('id' => $id)));
+        return $this->render('vinoPillarBundle:Mandje:confirm.html.twig', array(
                 'user' => $user,
                 'mandje' => null,
                 'bestelling' => $teTonenBestelling,
-            ));*/
+            ));
+    }
+    
+    /* * * CONFIRM STAP 2 : dit toont een nieuwe pagina met de bestelling * * */
+    public function afscheidAction($id) {
+        $user = $this->getUser();
+        $em = $this->getDoctrine()->getManager();
+        $teTonenBestelling = $em->getRepository('vinoPillarBundle:Bestelling')->findOneById($id);
+        //$teTonenBestelling = $tempBestelling;
+        if(!$teTonenBestelling) {
+            $this->get('session')->getFlashBag()->add('msg_error', 'Deze bestelling kon niet worden teruggevonden!');
+            return $this->redirect($this->generateUrl('vino_pillar_homepage'));
+        }
+        return $this->render('vinoPillarBundle:Mandje:confirm.html.twig', array(
+                'user' => $user,
+                'mandje' => null,
+                'bestelling' => $teTonenBestelling,
+            ));
     }
     
     /* * * * * CALLABLES * * * * */

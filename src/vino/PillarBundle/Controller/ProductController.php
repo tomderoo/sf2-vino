@@ -45,7 +45,7 @@ class ProductController extends Controller {
             // maar we kunnen alternatief ook een redirect doen naar een andere pagina
             $this->get('session')
                     ->getFlashBag()
-                    ->add('infomsg', 'Er zijn geen wijnen in de database');
+                    ->add('msg_warning', 'Er zijn geen wijnen in de database...');
             return $this->redirect($this->generateUrl('vino_pillar_homepage'));
         }
         
@@ -87,9 +87,12 @@ class ProductController extends Controller {
         // indien de slug niet kan worden gekoppeld aan de database
         if (!$product) {
             // toont een foutmelding...
-            throw $this->createNotFoundException('Sorry! Dit item konden we niet terugvinden...');
+            //throw $this->createNotFoundException('Sorry! Dit item konden we niet terugvinden...');
             // maar we kunnen alternatief ook een redirect doen naar een andere pagina
-            //return $this->redirect($this->generateUrl('vino_pillar_homepage'));
+            $this->get('session')
+                    ->getFlashBag()
+                    ->add('msg_warning', 'Sorry! Deze wijn konden we niet terugvinden in de database...');
+            return $this->redirect($this->generateUrl('vino_pillar_wijnen'));
         }
         
         // laat form zien INDIEN:
@@ -141,7 +144,7 @@ class ProductController extends Controller {
                 $infoMsg = 'Review succesvol toegevoegd!';
                 $this->get('session')
                         ->getFlashBag()
-                        ->add('infomsg', $infoMsg);
+                        ->add('msg_success', $infoMsg);
                 
                 // disable de form (om geen dubbelposting toe te laten)
                 $formvisible = 0;
@@ -157,7 +160,6 @@ class ProductController extends Controller {
         // zoek de bijhorende comments
         $reviews = $em->getRepository('vinoPillarBundle:Review')->findByWijn($product->getId());
         if (!$reviews) { $reviews = null; }
-        //$comments = null;
         
         // toon het productdetail
         return $this->render('vinoPillarBundle:Product:productdetail.html.twig', array(
@@ -183,7 +185,7 @@ class ProductController extends Controller {
             // maak flashmessage
             $this->get('session')
                     ->getFlashBag()
-                    ->add('infomsg', $infoMsg);
+                    ->add('msg_info', $infoMsg);
             return $this->redirect($this->generateUrl('vino_pillar_homepage'));
         }
         
@@ -225,7 +227,7 @@ class ProductController extends Controller {
         $infoMsg = 'Wijn met slug ' . $productSlug . ' succesvol aangemaakt!';
         $this->get('session')
                 ->getFlashBag()
-                ->add('infomsg', $infoMsg);
+                ->add('msg_info', $infoMsg);
         return $this->redirect($this->generateUrl('vino_pillar_homepage'));
     }
     

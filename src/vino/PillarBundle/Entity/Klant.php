@@ -42,7 +42,7 @@ class Klant implements UserInterface, \Serializable {
     protected $huisnr;
     
     /**
-     * @ORM\Column(type="string", length=5)
+     * @ORM\Column(type="string", length=5, nullable=true)
      */
     protected $busnr;
     
@@ -352,7 +352,28 @@ class Klant implements UserInterface, \Serializable {
     {
         return $this->level;
     }
-
+    
+    /**
+     * Set isActive
+     * 
+     * @param boolean $isActive
+     * @return klant
+     */
+    public function setIsActive($isActive) {
+        $this->isActive = $isActive;
+        
+        return $this;
+    }
+    
+    /**
+     * Get isActive
+     * 
+     * @return boolean
+     */
+    public function getIsActive() {
+        return $this->isActive;
+    }
+    
     /**
      * Add review
      *

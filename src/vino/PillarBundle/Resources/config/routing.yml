@@ -36,9 +36,13 @@ vino_pillar_login_process:
     path:       /loginprocess
     defaults:   { _controller: vinoPillarBundle:Default:loginProcess }
 
+vino_pillar_register:
+    path:       /register
+    defaults:   { _controller: vinoPillarBundle:Klant:register }
+
 vino_pillar_register_process:
     path:       /registerprocess
-    defaults:   { _controller: vinoPillarBundle:Default:registerProcess }
+    defaults:   { _controller: vinoPillarBundle:Klant:registerProcess }
     
 logout:
     path:       /logout
@@ -85,6 +89,10 @@ vino_pillar_checkout:
 vino_pillar_confirm:
     path:       /confirm
     defaults:   { _controller: vinoPillarBundle:Mandje:confirm }
+    
+vino_pillar_afscheid:
+    path:       /confirm/{id}
+    defaults:   { _controller: vinoPillarBundle:Mandje:afscheid }
 
 # admin functies
 vino_pillar_admin:

@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <meta charset="UTF-8" />
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>{% block title %}Welkom{% endblock %} - In Vino Simfonia</title>
         <!--[if lt IE 9]>
             <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -25,109 +27,98 @@
         <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
     </head>
     <body>
-        <!--<div id="wrapper">-->
-            {% block nav %}
-                <nav class="navbar navbar-default navbar-static-top" role="navigation">
-                    <div class="container-fluid">
-                        <div class="navbar-header">
-                            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-                                <span class="sr-only">Toggle navigation</span>
-                                <span class="icon-bar"></span>
-                                <span class="icon-bar"></span>
-                                <span class="icon-bar"></span>
-                            </button>
-                            <a class="navbar-brand" href="{{ path('vino_pillar_homepage') }}">In Vino Simfonia</a>
-                        </div>
-                        <div class="collapse navbar-collapse" id="logindiv">
-                            {% block navlinks %}
-                                <ul class="nav navbar-nav">
-                                    <li><a href="{{ path('vino_pillar_wijnen') }}">Wijnen</a></li>
-                                    <li><a href="{{ path('vino_pillar_over-ons') }}">Over ons</a></li>
-                                    <li><a href="{{ path('vino_pillar_contact') }}">Contact</a></li>
-                                    {% if app.user and app.user.username == 'admin@sf.vino' %}
-                                        <li class="active"><a href="{{ path('vino_pillar_admin') }}">Admin</a></li>
-                                    {% endif %}
-                                </ul>
-                            {% endblock %}
-                            {#
-                            {% block navuser %}
-                                {% if user == null %}
-                                    <ul class="nav navbar-nav pull-right">
-                                        <li class="dropdown" id="JS_menuLogin">
-                                            <a class="dropdown-toggle" href="#" data-toggle="dropdown" id="navLogin">Login</a>
-                                            <div class="dropdown-menu" style="padding:17px;">
-                                                <form class="form" id="formLogin"> 
-                                                    <input class="form-control" name="username" id="username" type="text" placeholder="E-mail">
-                                                    <input class="form-control" name="password" id="password" type="password" placeholder="Paswoord"><br>
-                                                    <input type="submit" value="Login">
-                                                </form>
-                                                <hr>
-                                                <p><a href="{{ path('vino_pillar_login') }}">Nieuwe klant?</a></p>
-                                            </div>
-                                        </li>
-                                        <li id="NOJS_menuLogin"><a href="{{ path('vino_pillar_login') }}">Login</a></li>
-                                    </ul>
-                                {% else %}
-                                    <ul class="nav navbar-nav pull-right">
-                                        <li><a href="{{ path('vino_pillar_logout') }}">Logout '{{ user.email }}'</a></li>
-                                    </ul>
-                                {% endif %}
-                            {% endblock %}
-                            #}
-                            {% block navuser %}
-                                <ul class="nav navbar-nav pull-right">
-                                {% if mandje is defined and mandje != null %}
-                                    <li><a href="{{ path('vino_pillar_mandje') }}">Mandje</a></li>
-                                {% endif %}
-                                {% if app.user %}
-                                    <li><a href="#">{{ app.user.username }}</a></li>
-                                    <li><a href="{{ path('logout') }}">Uitloggen</a></li>
-                                {% else %}
-                                    <li><a href="{{ path('login') }}">Login</a></li>
-                                {% endif %}
-                                </ul>
-                            {% endblock %}
-                        </div>
+        {% block nav %}
+            <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#collapsemenu">
+                            <span class="sr-only">Toggle navigation</span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                        <a class="navbar-brand" href="{{ path('vino_pillar_homepage') }}">In Vino Simfonia</a>
                     </div>
-                </nav>
-            {% endblock %}
-        
-            {% block header %}
-                <header class="bar-header"></header>
-            {% endblock %}
-            
-            <div id="mainbody">
-                {% block flashinfo %}
-                    {% for flashMessage in app.session.flashbag.get('infomsg') %}
-                        <div class="alert alert-info" role="alert">
-                            {{ flashMessage|raw }}
-                        </div>
-                    {% endfor %}
-                {% endblock %}
-                {#
-                {% block klant %}
-                    {% if app.user.id is defined %}
-                        User is defined
-                        <pre>
-                        Met user id: {{ app.user.id }}
-                        </pre>
-                    {% endif %}
-                {% endblock %}
-                #}
-                {#
-                {% block mandje %}
-                    {% if mandje is defined %}
-                        Mandje is defined
-                        <pre>
-                        {{ dump(mandje) }}
-                        </pre>
-                    {% endif %}
-                {% endblock %}
-                #}
-                {% block body %}{% endblock %}
-            </div>
+                    <div class="collapse navbar-collapse" id="collapsemenu">
+                        {% block navlinks %}
+                            <ul class="nav navbar-nav">
+                                <li><a href="{{ path('vino_pillar_wijnen') }}">Wijnen</a></li>
+                                <li><a href="{{ path('vino_pillar_over-ons') }}">Over ons</a></li>
+                                <li><a href="{{ path('vino_pillar_contact') }}">Contact</a></li>
+                                {% if app.user and app.user.username == 'admin@sf.vino' %}
+                                    <li class="active"><a href="{{ path('vino_pillar_admin') }}">Admin</a></li>
+                                {% endif %}
+                            </ul>
+                        {% endblock %}
+                        {% block navuser %}
+                            <ul class="nav navbar-nav navbar-right">
+                            {% if mandje is defined and mandje != null %}
+                                <li><a href="{{ path('vino_pillar_mandje') }}">Mandje</a></li>
+                            {% endif %}
+                            {% if app.user %}
+                                {#<li><p class="navbar-text">Ingelogd als: <b>{{ app.user.username }}</b></p></li>#}
+                                <li><a href="{{ path('logout') }}" title="{{ app.user.username }} uitloggen" alt="{{ app.user.username }} uitloggen">Uitloggen</a></li>
+                            {% else %}
+                                <li><a href="{{ path('login') }}">Login</a></li>
+                                <li><a href="{{ path('vino_pillar_register') }}">Registreren</a></li>
+                            {% endif %}
+                            </ul>
+                        {% endblock %}
+                    </div>
+                </div>
+            </nav>
+        {% endblock %}
 
-        <!--</div>-->
+        {% block header %}
+            <header class="bar-header"></header>
+        {% endblock %}
+
+        <div id="mainbody">
+            {% block flashinfo %}
+                {% for flashMessage in app.session.flashbag.get('msg_info') %}
+                    <div class="alert alert-info" role="alert">
+                        {{ flashMessage|raw }}
+                    </div>
+                {% endfor %}
+                {% for flashMessage in app.session.flashbag.get('msg_success') %}
+                    <div class="alert alert-success" role="alert">
+                        {{ flashMessage|raw }}
+                    </div>
+                {% endfor %}
+                {% for flashMessage in app.session.flashbag.get('msg_warning') %}
+                    <div class="alert alert-warning" role="alert">
+                        {{ flashMessage|raw }}
+                    </div>
+                {% endfor %}
+                {% for flashMessage in app.session.flashbag.get('msg_error') %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ flashMessage|raw }}
+                    </div>
+                {% endfor %}
+            {% endblock %}
+            {#
+            {% block klant %}
+                {% if app.user.id is defined %}
+                    User is defined
+                    <pre>
+                    Met user id: {{ app.user.id }}
+                    </pre>
+                {% endif %}
+            {% endblock %}
+            #}
+            {#
+            {% block mandje %}
+                {% if mandje is defined %}
+                    Mandje is defined
+                    <pre>
+                    {{ dump(mandje) }}
+                    </pre>
+                {% endif %}
+            {% endblock %}
+            #}
+            {% block body %}{% endblock %}
+        </div>
+
             
         {% block javascripts %}
             {% javascripts

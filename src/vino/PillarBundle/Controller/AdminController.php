@@ -54,6 +54,11 @@ class AdminController extends Controller {
         
         $productlijst = $em->getRepository('vinoPillarBundle:Wijn')->findAll();
         
+        if (!$productlijst) {
+            $this->get('session')->getFlashBag()->add('msg_warning', 'Er zijn geen wijnen in de database - <a href="' . $this->generateUrl('vino_pillar_nieuwewijn'). '">voeg een nieuwe wijn toe</a>.');
+            $this->redirect($this->generateUrl('vino_pillar_nieuwewijn'));
+        }
+        
         foreach ($productlijst as $product) {
             $dezeRating = $this->vindWijnRating($product->getId());
             $product->setRating($dezeRating);
@@ -89,9 +94,10 @@ class AdminController extends Controller {
         // indien de slug niet kan worden gekoppeld aan de database
         if (!$product) {
             // toont een foutmelding...
-            throw $this->createNotFoundException('Sorry! Dit item konden we niet terugvinden...');
+            //throw $this->createNotFoundException('Sorry! Dit item konden we niet terugvinden...');
             // maar we kunnen alternatief ook een redirect doen naar een andere pagina
-            //return $this->redirect($this->generateUrl('vino_pillar_homepage'));
+            $this->get('session')->getFlashBag()->add('msg_error', 'Sorry! Dit item kon niet worden teruggevonden.');
+            return $this->redirect($this->generateUrl('vino_pillar_allewijnen'));
         }
         
         // zoek de bijhorende comments
@@ -115,16 +121,17 @@ class AdminController extends Controller {
         $review = $em->getRepository('vinoPillarBundle:Review')->findOneById($id);
         if(!$review) {
             // review bestaat niet
-            $infoMsg = 'Review bestaat niet - verwijderen kon niet worden uitgevoerd.';
+            $this->get('session')
+                    ->getFlashBag()
+                    ->add('msg_error', 'Review bestaat niet - verwijderen kon niet worden uitgevoerd.');
         } else {
             // review bestaat wel
             $em->remove($review);
             $em->flush();
-            $infoMsg = 'Review succesvol verwijderd.';
+            $this->get('session')
+                    ->getFlashBag()
+                    ->add('msg_success', 'Review succesvol verwijderd.');
         }
-        $this->get('session')
-                ->getFlashBag()
-                ->add('infomsg', $infoMsg);
         return $this->redirect($this->generateUrl('vino_pillar_adminwijndetail', array('id' => $wijnid)));
     }
     
@@ -144,29 +151,6 @@ class AdminController extends Controller {
         
         // maak het form
         $wijn = new Wijn(); // roep de entity "wijn" aan
-        /*
-        $form = $this->createFormBuilder($wijn, array('attr' => array('class' => 'form-horizontal')))
-                ->add('naam', 'text', array ('attr' => array('class' => 'form-control')))
-                ->add('jaar', 'integer', array ('attr' => array('class' => 'form-control')))
-                ->add('omschrijving', 'textarea', array ('attr' => array('class' => 'form-control')))
-                ->add('categorie', 'entity', array(
-                    'attr' => array('class' => 'form-control'),
-                    'class' => 'vinoPillarBundle:Categorie',
-                    'property' => 'naam',
-                    'expanded' => false,
-                    'multiple' => false,
-                    ))
-                ->add('land', 'entity', array(
-                    'attr' => array('class' => 'form-control'),
-                    'class' => 'vinoPillarBundle:Land',
-                    'property' => 'naam',
-                    'expanded' => false,
-                    'multiple' => false,
-                ))
-                ->add('prijs', 'integer', array ('attr' => array('class' => 'form-control')))
-                ->add('save', 'submit', array('attr' => array('class' => 'btn btn-default'), 'label' => 'Toevoegen'))
-                ->getForm();
-        */
         // maak een form op basis van het form-type WijnType
         $form = $this->createForm(new WijnType(), $wijn, array('attr' => array('class' => 'form-horizontal')));
         
@@ -199,10 +183,9 @@ class AdminController extends Controller {
             ));*/
 
             // geef de melding weer en redirect
-            $infoMsg = 'Wijn succesvol toegevoegd!';
             $this->get('session')
                     ->getFlashBag()
-                    ->add('infomsg', $infoMsg);
+                    ->add('msg_success', 'Wijn succesvol toegevoegd!');
             return $this->redirect($this->generateUrl('vino_pillar_allewijnen'));
         }
         $form_view = $form->createView();
@@ -230,10 +213,9 @@ class AdminController extends Controller {
         
         // roep de wijn uit de database
         if (!$oudeWijn = $em->getRepository('vinoPillarBundle:Wijn')->findOneById($id)) {
-            $infoMsg = 'Wijn bestaat niet - bewerken kon niet worden uitgevoerd.';
             $this->get('session')
                     ->getFlashBag()
-                    ->add('infomsg', $infoMsg);
+                    ->add('msg_error', 'Wijn bestaat niet - bewerken kon niet worden uitgevoerd.');
             return $this->redirect($this->generateUrl('vino_pillar_allewijnen'));
         }
         // maak het form
@@ -253,10 +235,7 @@ class AdminController extends Controller {
             $em->flush();
             
             // geef de melding weer en redirect
-            $infoMsg = 'Wijn succesvol bewerkt!';
-            $this->get('session')
-                    ->getFlashBag()
-                    ->add('infomsg', $infoMsg);
+            $this->get('session')->getFlashBag()->add('msg_succes', 'Wijn succesvol bewerkt!');
             return $this->redirect($this->generateUrl('vino_pillar_allewijnen'));
         }
         
@@ -267,7 +246,6 @@ class AdminController extends Controller {
             'mandje' => $mandje,
             'form' => $form_view,
                 ));
-        //return $this->redirect($this->generateUrl('vino_pillar_allewijnen'));
     }
     
     /* * * VERWIJDER WIJN : verwijdert wijn met bepaalde id uit database * * */
@@ -280,15 +258,15 @@ class AdminController extends Controller {
         if(!$wijn) {
             // wijn bestaat niet
             $infoMsg = 'Wijn bestaat niet - verwijderen kon niet worden uitgevoerd.';
+            $this->get('session')->getFlashBag()->add('msg_error', $infoMsg);
         } else {
             // bestelling bestaat wel
             $em->remove($wijn);
             $em->flush();
             $infoMsg = 'Wijn succesvol verwijderd.';
+            $this->get('session')->getFlashBag()->add('msg_success', $infoMsg);
         }
-        $this->get('session')
-                ->getFlashBag()
-                ->add('infomsg', $infoMsg);
+        
         return $this->redirect($this->generateUrl('vino_pillar_allewijnen'));
     }
     
@@ -307,6 +285,12 @@ class AdminController extends Controller {
         // laadt de manager en lijst
         $em = $this->getDoctrine()->getManager();
         $alleCats = $em->getRepository('vinoPillarBundle:Categorie')->findAllSortedByNaam();
+        
+        if (!$alleCats) {
+            // er zijn geen categorieën
+            $this->get('session')->getFlashBag()->add('msg_warning', 'Er zijn nog geen categorieën in de database - <a href="' . $this->generateUrl('vino_pillar_nieuwecat'). '">voeg een nieuwe categorie toe</a>.');
+            $this->redirect($this->generateUrl('vino_pillar_nieuwecat'));
+        }
         
         return $this->render('vinoPillarBundle:Admin:catlijst.html.twig', array(
             'user' => $user,
@@ -339,9 +323,7 @@ class AdminController extends Controller {
             
             // geef de melding weer en redirect
             $infoMsg = 'Categorie succesvol toegevoegd!';
-            $this->get('session')
-                    ->getFlashBag()
-                    ->add('infomsg', $infoMsg);
+            $this->get('session')->getFlashBag()->add('msg_success', $infoMsg);
             return $this->redirect($this->generateUrl('vino_pillar_allecats'));
         }
         $form_view = $form->createView();
@@ -367,7 +349,7 @@ class AdminController extends Controller {
             $infoMsg = 'Categorie bestaat niet - bewerken kon niet worden uitgevoerd.';
             $this->get('session')
                     ->getFlashBag()
-                    ->add('infomsg', $infoMsg);
+                    ->add('msg_error', $infoMsg);
             return $this->redirect($this->generateUrl('vino_pillar_allecats'));
         }
         
@@ -386,7 +368,7 @@ class AdminController extends Controller {
             $infoMsg = 'Categorie succesvol aangepast!';
             $this->get('session')
                     ->getFlashBag()
-                    ->add('infomsg', $infoMsg);
+                    ->add('msg_success', $infoMsg);
             return $this->redirect($this->generateUrl('vino_pillar_allecats'));
         }
         $form_view = $form->createView();
@@ -405,6 +387,7 @@ class AdminController extends Controller {
         if(!$cat = $em->getRepository('vinoPillarBundle:Categorie')->findOneById($id)) {
             // cat bestaat niet
             $infoMsg = 'Categorie bestaat niet - verwijderen kon niet worden uitgevoerd.';
+            $this->get('session')->getFlashBag()->add('msg_error', $infoMsg);
         } else {
             // cat bestaat wel
             // checken of cat niet in wijnen zit
@@ -412,16 +395,14 @@ class AdminController extends Controller {
                 $checkMsg = 'Kan categorie niet verwijderen omdat er wijnen zijn met deze categorie. Verwijder of bewerk eerst de verwante <a href="' . $this->generateUrl('vino_pillar_allewijnen') . '">wijnen</a>.';
                 $this->get('session')
                     ->getFlashBag()
-                    ->add('infomsg', $checkMsg);
+                    ->add('msg_error', $checkMsg);
                 return $this->redirect($this->generateUrl('vino_pillar_allecats'));
             }
             $em->remove($cat);
             $em->flush();
             $infoMsg = 'Categorie succesvol verwijderd.';
+            $this->get('session')->getFlashBag()->add('msg_success', $infoMsg);
         }
-        $this->get('session')
-                ->getFlashBag()
-                ->add('infomsg', $infoMsg);
         return $this->redirect($this->generateUrl('vino_pillar_allecats'));
     }
     
@@ -440,6 +421,11 @@ class AdminController extends Controller {
         // laadt de manager en lijst
         $em = $this->getDoctrine()->getManager();
         $alleLanden = $em->getRepository('vinoPillarBundle:Land')->findAllSortedByNaam();
+        
+        if (!$alleLanden) {
+            $this->get('session')->getFlashBag()->add('msg_warning', 'Er zijn geen landen in de database - <a href="' . $this->generateUrl('vino_pillar_nieuweland'). '">voeg een nieuw land toe</a>.');
+            $this->redirect($this->generateUrl('vino_pillar_nieuweland'));
+        }
         
         return $this->render('vinoPillarBundle:Admin:landlijst.html.twig', array(
             'user' => $user,
@@ -474,7 +460,7 @@ class AdminController extends Controller {
             $infoMsg = 'Land succesvol toegevoegd!';
             $this->get('session')
                     ->getFlashBag()
-                    ->add('infomsg', $infoMsg);
+                    ->add('msg_success', $infoMsg);
             return $this->redirect($this->generateUrl('vino_pillar_allelanden'));
         }
         $form_view = $form->createView();
@@ -500,7 +486,7 @@ class AdminController extends Controller {
             $infoMsg = 'Land bestaat niet - bewerken kon niet worden uitgevoerd.';
             $this->get('session')
                     ->getFlashBag()
-                    ->add('infomsg', $infoMsg);
+                    ->add('msg_error', $infoMsg);
             return $this->redirect($this->generateUrl('vino_pillar_allelanden'));
         }
         
@@ -519,7 +505,7 @@ class AdminController extends Controller {
             $infoMsg = 'Land succesvol aangepast!';
             $this->get('session')
                     ->getFlashBag()
-                    ->add('infomsg', $infoMsg);
+                    ->add('msg_success', $infoMsg);
             return $this->redirect($this->generateUrl('vino_pillar_allelanden'));
         }
         $form_view = $form->createView();
@@ -538,6 +524,7 @@ class AdminController extends Controller {
         if(!$land = $em->getRepository('vinoPillarBundle:Land')->findOneById($id)) {
             // land bestaat niet
             $infoMsg = 'Land bestaat niet - verwijderen kon niet worden uitgevoerd.';
+            $this->get('session')->getFlashBag()->add('msg_error', $infoMsg);
         } else {
             // land bestaat wel
             // checken of land niet in wijnen zit
@@ -545,16 +532,14 @@ class AdminController extends Controller {
                 $checkMsg = 'Kan land niet verwijderen omdat er wijnen zijn met dit land. Verwijder of bewerk eerst de verwante <a href="' . $this->generateUrl('vino_pillar_allewijnen') . '">wijnen</a>.';
                 $this->get('session')
                     ->getFlashBag()
-                    ->add('infomsg', $checkMsg);
+                    ->add('msg_warning', $checkMsg);
                 return $this->redirect($this->generateUrl('vino_pillar_allelanden'));
             }
             $em->remove($land);
             $em->flush();
             $infoMsg = 'Land succesvol verwijderd.';
+            $this->get('session')->getFlashBag()->add('msg_success', $infoMsg);
         }
-        $this->get('session')
-                ->getFlashBag()
-                ->add('infomsg', $infoMsg);
         return $this->redirect($this->generateUrl('vino_pillar_allelanden'));
     }
     
@@ -578,6 +563,11 @@ class AdminController extends Controller {
         
         $alleBestellingen = $em->getRepository('vinoPillarBundle:Bestelling')->findAllSortedById();
         
+        if (!$alleBestellingen) {
+            $this->get('session')->getFlashBag()->add('msg_warning', 'Er zijn geen bestellingen in de database.');
+            $this->redirect($this->generateUrl('vino_pillar_admin'));
+        }
+        
         return $this->render('vinoPillarBundle:Admin:bestellingen.html.twig', array(
             'user' => $user,
             'mandje' => $mandje,
@@ -592,9 +582,10 @@ class AdminController extends Controller {
         
         // laadt de bestelling
         $teTonenBestelling = $em->getRepository('vinoPillarBundle:Bestelling')->findOneById($id);
-        //if($teTonenBestelling == null) {
-        //    return $this->redirect($this->generateUrl('vino_pillar_homepage'));
-        //}
+        if(!$teTonenBestelling) {
+            $this->get('session')->getFlashBag()->add('msg_error', 'Deze bestelling kon niet worden teruggevonden!');
+            return $this->redirect($this->generateUrl('vino_pillar_allebestellingen'));
+        }
         return $this->render('vinoPillarBundle:Admin:bestelling.html.twig', array(
                 'user' => $this->getUser(),
                 'mandje' => $this->getRequest()->getSession()->get('mandje'),
@@ -609,18 +600,18 @@ class AdminController extends Controller {
         
         // laadt de bestelling
         $teTonenBestelling = $em->getRepository('vinoPillarBundle:Bestelling')->findOneById($id);
-        if($teTonenBestelling == null) {
+        if(!$teTonenBestelling) {
             // bestelling bestaat niet
-            $infoMsg = 'Bestelling bestaat niet - verwijderen kon niet worden uitgevoerd.';
+            $this->get('session')->getFlashBag()->add('msg_error', 'Deze bestelling kon niet worden teruggevonden!');
         } else {
             // bestelling bestaat wel
             $em->remove($teTonenBestelling);
             $em->flush();
             $infoMsg = 'Bestelling succesvol verwijderd.';
-        }
-        $this->get('session')
+            $this->get('session')
                 ->getFlashBag()
-                ->add('infomsg', $infoMsg);
+                ->add('msg_success', $infoMsg);
+        }
         return $this->redirect($this->generateUrl('vino_pillar_allebestellingen'));
     }
     
@@ -631,13 +622,13 @@ class AdminController extends Controller {
         
         // laadt de bestelling
         $teTonenBestelling = $em->getRepository('vinoPillarBundle:Bestelling')->findOneById($id);
-        if($teTonenBestelling == null) {
+        if(!$teTonenBestelling) {
             // bestelling bestaat niet
             $infoMsg = 'Bestelling bestaat niet - statusupdate kon niet worden uitgevoerd.';
             $this->get('session')
                     ->getFlashBag()
-                    ->add('infomsg', $infoMsg);
-            return $this->redirect($this->generateUrl('vino_pillar_homepage'));
+                    ->add('msg_error', $infoMsg);
+            return $this->redirect($this->generateUrl('vino_pillar_allebestellingen'));
         }
         // switch de huidige status
         if($teTonenBestelling->getBestelstatus() == 0) {
@@ -650,7 +641,7 @@ class AdminController extends Controller {
         $infoMsg = 'Bestelstatus aangepast voor bestelling met id ' . $id;
         $this->get('session')
                 ->getFlashBag()
-                ->add('infomsg', $infoMsg);
+                ->add('msg_success', $infoMsg);
         return $this->redirect($this->generateUrl('vino_pillar_toonbestelling', array('id' => $id)));
     }
     
@@ -675,74 +666,5 @@ class AdminController extends Controller {
             $ratingTotaal += $review->getRating();
         }
         return $ratingTotaal / $count;
-    }
-    
-    public function slugThis($str) {
-        /*
-         * Deze functie maakt een "slug" van een doorgegeven string
-         * Om specifiek te kunnen werken in een omgeving waar al eens namen worden doorgegeven met
-         * ge-accenteerde karakters, moet er een systeem worden gebruikt om deze te vervangen door
-         * hun "normale" equivalenten. Onderstaande werkt, maar is niet "volgens het boekje"; blijkt
-         * dat preg_replace("/[ôóò]/", "o", string) dubbele waarden geeft doordat er ergens een
-         * encoding fout gebeurt. Onderstaande werkt wel.
-         * 
-         * NOOT: deze functie staat hier louter ter illustratie, aangezien beter de Slugify-bundle
-         * gebruikt kan worden.
-         */
-        //echo("<p>De string: " . $str . "</p>");
-	
-	// lowercase UTF-8
-	$str = trim(mb_strtolower($str, 'UTF-8'));
-        //echo("<p>De string na mb_strtolower met UTF-8: " . $str . "</p>");
-        
-        // lowercase standaard
-        // DIT WERKT NIET
-        //$str = trim(strtolower($str));
-	//echo("<p>De string na strtolower: " . $str . "</p>");
-	
-	// weg met single quotes
-        $str = str_replace("'", '', $str);
-	//echo("<p>De string na replace single quotes: " . $str . "</p>");
-        
-        // UTF8-encode
-        //$str = utf8_encode($str);
-        //echo("<p>De string na UTF8-encode: $str</p>");
-        
-        // UTF8 decode
-        //$str = utf8_decode($str);
-        //echo("<p>De string na UTF8 decode: $str</p>");
-        
-        // vervang accentkarakters door normale equivalenten
-        $matchArray = array(
-           "á" => "a",
-           "â" => "a",
-           "ô" => "o",
-           "ó" => "o",
-           "ò" => "o",
-        );
-        /*
-        foreach($matchArray as $accented => $normal) {
-           $str = str_replace($accented, $normal, $str);
-        }
-        */
-        $str = strtr($str, $matchArray);
-        //$str = strtr($str, "ôóò", "ooo");
-        //$str = preg_replace("/[ôöóòõ]/", "o", $str);
-        //$str = preg_replace("[ôöóòõ]", "o", $str);
-        //$str = preg_replace(array("[ô]","[ó]","[ò]"), "o", $str);
-        //$str = preg_replace(array("/[ô]/","/[ó]/","/[ò]/"), "o", $str);
-        //$str = preg_replace("/&([a-z])[a-z]+;/i", "$1",$str);
-
-        //echo("<p>De string na vervangen accentchars: " . $str . "</p>");
-		
-        // character other than a-z, 0-9 will be replaced with a single dash (-)
-        $str = preg_replace("/[^a-z0-9]+/", "-", $str);
-        //echo("<p>De string na toevoegen single dashes: " . $str . "</p>");
-		
-        // Remove any beginning or trailing dashes
-        $str = trim($str, "-");
-        //echo("<p>De string na verwijderen trailing dashes: " . $str . "</p>");
-        
-        return $str;
     }
 }

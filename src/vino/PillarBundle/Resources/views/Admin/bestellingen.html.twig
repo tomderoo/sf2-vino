@@ -41,7 +41,7 @@
                 <tr>
                     <td>{{ bestelling.klant.aNaam }}, {{ bestelling.klant.vNaam }}</td>
                     <td>{{ bestelling.klant.email }}</td>
-                    <td>{{ bestelling.datum|date('d-m-Y H:m:s') }}</td>
+                    <td>{{ bestelling.datum|date('d-m-Y H:i:s') }}</td>
                     <td>
                         {% if bestelling.leverwijze == 0 %}Afhaling{% else %}Thuislevering{% endif %}
                     </td>

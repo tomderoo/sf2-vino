@@ -9,36 +9,37 @@
 {% endblock %}
 
 {% block body %}
-    <h1>Dank voor uw bestelling</h1>
-    <div class="well">
-        <h3>Verzonden naar</h3>
-        <p>
-            {{ user.vNaam }}&nbsp;{{ user.aNaam }}<br>
-            {{ user.straat }}&nbsp;{{ user.huisnr }}{% if user.busnr != null or user.busnr != '' %}&nbsp;(bus {{ user.busnr }}){% endif %}<br>
-            {{ user.postcode }}&nbsp;{{ user.gemeente }}
-        </p>
-    </div>
-    <h3>Bestelling</h3>
+    <h1>Dank voor uw bestelling!</h1>
     {% if bestelling is defined and bestelling != null %}
-        <p>Besteld op: {{ bestelling.datum|date('d-m-Y') }}</p>
-        <div class="alert alert-info">Bestelling variabele:
-            <pre>
-            {{ dump(bestelling) }}
-            </pre>
+        <div class="well">
+            <h3>Verzonden naar</h3>
+            <p>
+                {{ bestelling.klant.vNaam }}&nbsp;{{ bestelling.klant.aNaam }}<br>
+                {{ bestelling.klant.straat }}&nbsp;{{ bestelling.klant.huisnr }}{% if bestelling.klant.busnr != null or bestelling.klant.busnr != '' %}&nbsp;(bus {{ bestelling.klant.busnr }}){% endif %}<br>
+                {{ bestelling.klant.postcode }}&nbsp;{{ bestelling.klant.gemeente }}
+            </p>
         </div>
+        <h3>Bestelling</h3>
+        <p>Besteld op: {{ bestelling.datum|date('d-m-Y') }}</p>
         <table class="productlijst" border="1">
-            <thead>
-                <tr>
-                    <td>Aantal</td>
-                    <td>Naam</td>
-                    <td>Jaar</td>
-                    <td>Prijs / stuk</td>
-                    <td>Subtotaal</td>
-                </tr>
-            </thead>
             <tbody>
                 {% set subtotaalBestelling = 0 %}
+                {% set aantalFlessen = 0 %}
                 {% for bestellijn in bestelling.bestellijn %}
+                    {% set aantalFlessen = aantalFlessen + bestellijn.aantal %}
+                    {% set subtotaalBestelling = subtotaalBestelling + (bestellijn.wijn.prijs * bestellijn.aantal) %}
+                    <tr class="productlijst-verpakkinglijn-info-top">
+                        <td colspan="5">
+                            Product
+                        </td>
+                    </tr>
+                    <tr class="productlijst-verpakkinglijn-info-sub">
+                        <td>Aantal</td>
+                        <td>Naam</td>
+                        <td>Jaar</td>
+                        <td>Prijs / stuk</td>
+                        <td>Subtotaal</td>
+                    </tr>
                     <tr class="productlijst-bestellijn">
                         <td>{{ bestellijn.aantal }}</td>
                         <td>{{ bestellijn.wijn.naam }}</td>
@@ -59,64 +60,53 @@
                         <td>Prijs / stuk</td>
                         <td>Subtotaal</td>
                     </tr>
-                    {% set aantalVerpakteFlessen = 0 %}
-                    {% set subtotaalVerpakking = 0 %}
-                    {# Iteratie om na te gaan hoeveel verpakte flessen er in totaal al zijn #}
-                    {% for verpakkingtype in verpakkinglijst %}
-                        {% for verpakkinglijn in bestellijn.verpakkinglijn %}
-                            {% if verpakkinglijn.verpakking.id == verpakkingtype.id %}
-                                {% set aantalVerpakteFlessen = aantalVerpakteFlessen + (verpakkinglijn.aantal * verpakkingtype.aantalFlessen) %}
-                            {% endif %}
-                        {% endfor %}
-                    {% endfor %}
-                    <tr class="productlijst-verpakkinglijn-item">
-                        <td>{{ (bestellijn.aantal - aantalVerpakteFlessen) }}</td>
-                        <td colspan="2">Losse fles</td>
-                        <td>&euro; 0.00</td>
-                        <td>&euro; 0.00</td>
-                    </tr>
-                    {% for verpakkingtype in verpakkinglijst %}
+                    {% for verpakkingtype in bestellijn.verpakkinglijn %}
+                        {% set subtotaalBestelling = subtotaalBestelling + (verpakkingtype.verpakking.prijs * verpakkingtype.aantal) %}
                         <tr class="productlijst-verpakkinglijn-item">
+                            <td>{{ verpakkingtype.aantal }}</td>
+                            <td colspan="2">{{ verpakkingtype.verpakking.naam }}</td>
+                            <td>&euro; {{ (verpakkingtype.verpakking.prijs / 100)|number_format(2) }}</td>
                             <td>
-                                {# Aantal checken en weergeven door iteratie #}
-                                {% set aantalVerpakking = 0 %}
-                                {% for verpakkinglijn in bestellijn.verpakkinglijn %}
-                                    {% if verpakkinglijn.verpakking.id == verpakkingtype.id %}
-                                        {#<pre>
-                                        {{ dump(verpakkinglijn) }}
-                                        </pre>#}
-                                        {% set aantalVerpakking = verpakkinglijn.aantal %}
-                                        {# set aantalVerpakteFlessen = aantalVerpakteFlessen + (aantalVerpakking * verpakkingtype.aantalFlessen) #}
-                                    {% endif %}
-                                {% endfor %}
-                                {{ aantalVerpakking }}
-                            </td>
-                            <td colspan="2">{{ verpakkingtype.naam }}</td>
-                            <td>&euro; {{ (verpakkingtype.prijs / 100)|number_format(2) }}</td>
-                            <td>
-                                {# Subtotaal van deze verpakkinglijn #}
-                                {% set subtotaalVerpakkinglijn = verpakkingtype.prijs * aantalVerpakking %}
-                                {# Dit toevoegen aan het subtotaal van de verpakking #}
-                                {% set subtotaalVerpakking = subtotaalVerpakking + subtotaalVerpakkinglijn %}
-                                &euro; {{ (subtotaalVerpakkinglijn / 100)|number_format(2) }}
+                                &euro; {{ (verpakkingtype.verpakking.prijs * verpakkingtype.aantal / 100)|number_format(2) }}
                             </td>
                         </tr>
                     {% endfor %}
-                    <tr class="productlijst-verpakkinglijn-subtotaal">
-                        <td colspan="4">Subtotaal verpakkingen</td>
-                        <td>&euro; {{ (subtotaalVerpakking / 100)|number_format(2) }}</td>
-                    </tr>
-                    {# Optellen van subtotalen voor deze bestellijn bij het geheel #}
-                    {% set subtotaalBestelling = subtotaalBestelling + subtotaalVerpakking + (bestellijn.wijn.prijs * bestellijn.aantal) %}
                 {% endfor %}
+                <tr class="productlijst-verzending-info-top">
+                    <td colspan="5">
+                        Leverwijze
+                    </td>
+                </tr>
+                <tr class="productlijst-verzending-keuze">
+                    <td>&nbsp;</td>
+                    <td colspan="3">
+                        {% if bestelling.leverwijze == 0 %}
+                            Afhaling in magazijn
+                        {% else %}
+                            Levering aan huis
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if bestelling.leverwijze == 0 %}
+                            &euro; 0.00
+                        {% else %}
+                            {% if aantalFlessen > 3 %}
+                                &euro; 0.00
+                            {% else %}
+                                &euro; 3.00
+                                {% set subtotaalBestelling = subtotaalBestelling + 300 %}
+                            {% endif %}
+                        {% endif %}
+                    </td>
+                </tr>
                 <tr class="productlijst-bestelling-subtotaal">
-                    <td colspan="4">Subtotaal bestelling</td>
-                    <td>&euro; {{ (subtotaalBestelling / 100)|number_format(2) }}</td>
+                    <td colspan="4">Eindtotaal bestelling</td>
+                    <td>
+                        &euro; {{ (subtotaalBestelling / 100)|number_format(2) }}
+                    </td>
                 </tr>
             </tbody>
         </table>
-        <hr>
-        -- Links... --
     {% else %}
         <p>Geen bestelling te tonen...</p>
     {% endif %}

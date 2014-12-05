@@ -20,6 +20,10 @@ vino\PillarBundle\Entity\Review:
                 max: 5
                 
 vino\PillarBundle\Entity\Klant:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
+            fields: email
+            message: 'Dit mailadres is reeds in gebruik...'
     properties:
         vNaam:
             - NotBlank: ~
@@ -29,15 +33,24 @@ vino\PillarBundle\Entity\Klant:
             - NotBlank: ~
         huisnr:
             - NotBlank: ~
+        busnr:
         postcode:
             - NotBlank: ~
+            - Length:
+                min: 4
+                minMessage: "Uw postcode moet minstens 4 tekens lang zijn"
         gemeente:
             - NotBlank: ~
         email:
             - NotBlank: ~
-            - Type: email
+            - Email: ~
         paswoord:
             - NotBlank: ~
+            - Length:
+                min: 8
+                max: 20
+                minMessage: "Uw paswoord moet minstens {{ limit }} tekens lang zijn"
+                maxMessage: "Uw paswoord mag maximum {{ limit }} tekens lang zijn"
         level:
             
 vino\PillarBundle\Entity\Wijn:
