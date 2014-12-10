@@ -100,6 +100,10 @@ class AdminController extends Controller {
             return $this->redirect($this->generateUrl('vino_pillar_allewijnen'));
         }
         
+        // zoek de bijhorende rating
+        $dezeRating = $this->vindWijnRating($product->getId());
+        $product->setRating($dezeRating);
+        
         // zoek de bijhorende comments
         $reviews = $em->getRepository('vinoPillarBundle:Review')->findByWijn($product->getId());
         
@@ -165,6 +169,7 @@ class AdminController extends Controller {
             //$slug = $this->slugThis($form['naam']->getData()) . '-' . $this->slugThis($form['jaar']->getData());
             //$slug = $this->slugThis($form['naam']->getData());
             $wijn->setSlug($slug);
+            //$wijn->upload(); // ENKEL NODIG INDIEN ZONDER CALLBACK
             $em->persist($wijn);
             $em->flush();
             
@@ -221,7 +226,6 @@ class AdminController extends Controller {
         // maak het form
         
         $form = $this->createForm(new WijnType(), $oudeWijn, array('attr' => array('class' => 'form-horizontal')));
-        
         $form->handleRequest($request);
 
         // indien sprake is van een ingediend form, doe dit
@@ -245,6 +249,7 @@ class AdminController extends Controller {
             'user' => $user,
             'mandje' => $mandje,
             'form' => $form_view,
+            'product' => $oudeWijn,
                 ));
     }
     

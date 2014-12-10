@@ -493,12 +493,11 @@ class MandjeController extends Controller {
          * - nieuwe manager maken
          * - de bestelling clonen (ook daar wordt enkel de klant en de bestelling getoond, niet de
          * bestellijnen en verpakkingslijnen...)
+         * - meerdere flush-aanroepen
          * Wat werkt wel;
          * - Het mandje clonen en dat laten zien
          * - Een redirect naar een nieuwe route waar een nieuw php-proces begint waar dan volgens
          * meegegeven id het object uit de database geladen wordt
-         * Wat werkt MISSCHIEN WEL:
-         * - Meerdere flush-aanroepingen hierboven!!!
          */
         //$teTonenBestelling = $em->getRepository('vinoPillarBundle:Bestelling')->findOneById($id);
         $teTonenBestelling = clone($mandje);
@@ -514,10 +513,10 @@ class MandjeController extends Controller {
         //$session->set('mandje', null);
         
         // maak flashmessage
-        /*$infoMsg = 'Uw bestelling werd succesvol geplaatst!';
+        $infoMsg = 'Uw bestelling werd succesvol geplaatst!';
         $this->get('session')
                 ->getFlashBag()
-                ->add('msg_success', $infoMsg);*/
+                ->add('msg_success', $infoMsg);
         //return $this->redirect($this->generateUrl('vino_pillar_afscheid', array('id' => $id)));
         return $this->render('vinoPillarBundle:Mandje:confirm.html.twig', array(
                 'user' => $user,

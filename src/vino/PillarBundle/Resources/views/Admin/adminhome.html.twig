@@ -7,42 +7,31 @@
 {% block body %}
     <h1>Administratiepagina</h1>
     <div class="">
-        <div class="well col-md-6">
+        <div class="col-md-6">
             <h3>Wijnen</h3>
             <ul>
-                <li><a href="{{ path('vino_pillar_allewijnen') }}">Overzicht wijnen</a>
-                    <ul>
-                        <li>Aanpassen</li>
-                        <li><a href="{{ path('vino_pillar_nieuwewijn') }}">Toevoegen</a></li>
-                        <li>Verwijderen</li>
-                        <li>Reviews verwijderen</li>
-                    </ul>
-                </li>
-                <li><a href="{{ path('vino_pillar_allecats') }}">Overzicht categorieën</a>
-                    <ul>
-                        <li>Aanpassen</li>
-                        <li><a href="{{ path('vino_pillar_nieuwecat') }}">Toevoegen</a></li>
-                        <li>Verwijderen</li>
-                    </ul>
-                </li>
-                <li><a href="{{ path('vino_pillar_allelanden') }}">Overzicht landen</a>
-                    <ul>
-                        <li>Aanpassen</li>
-                        <li><a href="{{ path('vino_pillar_nieuweland') }}">Toevoegen</a></li>
-                        <li>Verwijderen</li>
-                    </ul>
-                </li>
+                <li><a href="{{ path('vino_pillar_allewijnen') }}">Overzicht wijnen</a></li>
+                <li><a href="{{ path('vino_pillar_nieuwewijn') }}">Wijn toevoegen</a></li>
             </ul>
         </div>
-        <div class="well col-md-6">
+        <div class="col-md-6">
+            <h3>Categorieën</h3>
+            <ul>
+                <li><a href="{{ path('vino_pillar_allecats') }}">Overzicht categorieën</a></li>
+                <li><a href="{{ path('vino_pillar_nieuwecat') }}">Categorie toevoegen</a></li>
+            </ul>
+        </div>
+        <div class="col-md-6">
+            <h3>Landen</h3>
+            <ul>
+                <li><a href="{{ path('vino_pillar_allelanden') }}">Overzicht landen</a></li>
+                <li><a href="{{ path('vino_pillar_nieuweland') }}">Land toevoegen</a></li>
+            </ul>
+        </div>
+        <div class="col-md-6">
             <h3>Bestellingen</h3>
             <ul>
-                <li><a href="{{ path('vino_pillar_allebestellingen') }}">Overzicht bestellingen</a>
-                    <ul>
-                        <li>Verwerken</li>
-                        <li>Verwijderen</li>
-                    </ul>
-                </li>
+                <li><a href="{{ path('vino_pillar_allebestellingen') }}">Overzicht bestellingen</a></li>
             </ul>
         </div>
     </div>

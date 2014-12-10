@@ -20,7 +20,7 @@
                 <td>Leverwijze</td>
                 <td>Totaalbedrag</td>
                 <td>Bestelstatus</td>
-                <td>Acties</td>
+                <td>&nbsp;</td>
             </tr>
         </thead>
         <tbody>
@@ -40,21 +40,21 @@
                 {% endif %}
                 <tr>
                     <td>{{ bestelling.klant.aNaam }}, {{ bestelling.klant.vNaam }}</td>
-                    <td>{{ bestelling.klant.email }}</td>
+                    <td><a href="mailto:{{ bestelling.klant.email }}?subject=In Vino Simfonia: uw bestelling van {{ bestelling.datum|date('d-m-Y H:i:s') }}">{{ bestelling.klant.email }}</a></td>
                     <td>{{ bestelling.datum|date('d-m-Y H:i:s') }}</td>
                     <td>
                         {% if bestelling.leverwijze == 0 %}Afhaling{% else %}Thuislevering{% endif %}
                     </td>
                     <td>&euro; {{ (totaalprijs / 100)|number_format(2) }}</td>
-                    <td>
+                    <td data-sort="{{ bestelling.bestelstatus }}">
                         {% if bestelling.bestelstatus == 0 %}
-                            <b style="color:red">Onverwerkt</b>
+                            <div class="label label-danger" alt="Niet verwerkt" title="Niet verwerkt"><span class="glyphicon glyphicon-remove"></span></div>
                         {% else %}
-                            <b style="color: green">Verwerkt</b>
+                            <div class="label label-success" alt="Verwerkt" title="Verwerkt"><span class="glyphicon glyphicon-ok"></span></div>
                         {% endif %}
                     </td>
                     <td>
-                        <a class="btn btn-default" href="{{ path('vino_pillar_toonbestelling', {'id': bestelling.id}) }}">Detail</a>
+                        <a class="btn btn-default" href="{{ path('vino_pillar_toonbestelling', {'id': bestelling.id}) }}" alt="Bekijk detail" title="Bekijk detail"><span class="glyphicon glyphicon-eye-open"></span></a>
                     </td>
                 </tr>
             {% endfor %}
@@ -70,6 +70,12 @@
     <script type="text/javascript">
         $(document).ready(function(){
             $('.bestellinglijst').DataTable({
+                "aoColumnDefs": [
+                    { "bSortable": false, "aTargets": [ 6 ] }
+                ],
+                language: {
+                    url: '{{ app.request.basepath }}/js/vendor/datatables.nederlands.txt'
+                },
                     "order": [
                 [ 2, "asc"]
             ]});

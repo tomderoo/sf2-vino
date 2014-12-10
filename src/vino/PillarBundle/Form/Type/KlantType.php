@@ -40,9 +40,9 @@ class KlantType extends AbstractType
             'attr' => array('class' => 'form-control')
             ));
         $builder->add('paswoord', 'password', array (
-            'attr' => array('class' => 'form-control')
+            'attr' => array('class' => 'form-control', 'maxlength' => '20')
             ));
-        $builder->add('save', 'submit', array('attr' => array('class' => 'btn btn-default'), 'label' => 'Opslaan'));
+        $builder->add('save', 'submit', array('attr' => array('class' => 'btn btn-info'), 'label' => 'Opslaan'));
     }
 
     public function setDefaultOptions(OptionsResolverInterface $resolver)

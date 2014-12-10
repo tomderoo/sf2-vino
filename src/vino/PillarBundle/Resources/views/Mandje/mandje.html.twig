@@ -43,10 +43,10 @@
                         <td>{{ bestellijn.wijn.jaar }}</td>
                         <td>&euro; {{ (bestellijn.wijn.prijs / 100)|number_format(2) }}</td>
                         <td>
-                            <a class="btn btn-default" href="{{ path('vino_pillar_wijndetail', {'slug': bestellijn.wijn.slug}) }}">Detail</a>
-                            <a class="btn btn-warning" href="{{ path('vino_pillar_mandjeaantal', {'slug': bestellijn.wijn.slug, 'aantal': 1}) }}">+&nbsp;1</a>
-                            <a class="btn btn-warning" href="{{ path('vino_pillar_mandjeaantal', {'slug': bestellijn.wijn.slug, 'aantal': -1}) }}">-&nbsp;1</a>
-                            <a class="btn btn-danger" href="{{ path('vino_pillar_killmandjelijn', {'slug': bestellijn.wijn.slug}) }}">X</a>
+                            <a class="btn btn-default" href="{{ path('vino_pillar_wijndetail', {'slug': bestellijn.wijn.slug}) }}" alt="Bekijk detail" title="Bekijk detail"><span class="glyphicon glyphicon-eye-open"></span></a>
+                            <a class="btn btn-warning" href="{{ path('vino_pillar_mandjeaantal', {'slug': bestellijn.wijn.slug, 'aantal': 1}) }}" alt="+1" title="+1"><span class="glyphicon glyphicon-plus"></span></a>
+                            <a class="btn btn-warning" href="{{ path('vino_pillar_mandjeaantal', {'slug': bestellijn.wijn.slug, 'aantal': -1}) }}" alt="-1" title="-1"><span class="glyphicon glyphicon-minus"></span></a>
+                            <a class="btn btn-danger" href="{{ path('vino_pillar_killmandjelijn', {'slug': bestellijn.wijn.slug}) }}" alt="Verwijder uit mandje" title="Verwijder uit mandje"><span class="glyphicon glyphicon-trash"></span></a>
                         </td>
                         <td>
                             &euro; {{ (bestellijn.wijn.prijs * bestellijn.aantal / 100)|number_format(2) }}
@@ -105,10 +105,10 @@
                                 {#Verpakte flessen = {{ aantalVerpakteFlessen }}
                                 Onverpakte flessen = {{ aantalOnverpakteFlessen }}#}
                                 {% if verpakkingtype.aantalFlessen <= aantalOnverpakteFlessen %}
-                                    <a class="btn btn-warning" href="{{ path('vino_pillar_inverpakking', {'slug': bestellijn.wijn.slug, 'verpakking': verpakkingtype.id }) }}">+</a>
+                                    <a class="btn btn-warning" href="{{ path('vino_pillar_inverpakking', {'slug': bestellijn.wijn.slug, 'verpakking': verpakkingtype.id }) }}" alt="+1 deze verpakking" title="+1 deze verpakking"><span class="glyphicon glyphicon-plus"></span></a>
                                 {% endif %}
                                 {% if aantalVerpakking > 0 %}
-                                    <a class="btn btn-warning" href="{{ path('vino_pillar_uitverpakking', {'slug': bestellijn.wijn.slug, 'verpakking': verpakkingtype.id }) }}">-</a>
+                                    <a class="btn btn-warning" href="{{ path('vino_pillar_uitverpakking', {'slug': bestellijn.wijn.slug, 'verpakking': verpakkingtype.id }) }}" alt="-1 deze verpakking" title="-1 deze verpakking"><span class="glyphicon glyphicon-minus"></span></a>
                                 {% endif %}
                             </td>
                             <td>

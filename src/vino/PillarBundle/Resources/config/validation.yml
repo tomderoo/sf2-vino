@@ -73,6 +73,20 @@ vino\PillarBundle\Entity\Wijn:
             - Range:
                 min: 1
                 minMessage: Geen prijzen lager dan 1 eurocent
+        imgpath:
+        image:
+            - Image:
+                maxSize: 10k
+                maxSizeMessage: Maximum bestandsgrootte is 10 kilobyte
+                mimeTypes: [ image/jpeg, image/png ]
+                minWidth: 50
+                maxWidth: 60
+                minWidthMessage: Breedte min. 50px en max. 60px
+                maxWidthMessage: Breedte min. 50px en max. 60px
+                minHeight: 190
+                maxHeight: 190
+                minHeightMessage: Breedte moet exact 190px zijn
+                maxHeightMessage: Breedte moet exact 190px zijn
 
 vino\PillarBundle\Entity\Categorie:
     properties:

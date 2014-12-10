@@ -157,6 +157,10 @@ class ProductController extends Controller {
             //var_dump($user->getRoles());
         }
         
+        // zoek de bijhorende rating
+        $dezeRating = ProductController::vindWijnRating($product->getId());
+        $product->setRating($dezeRating);
+        
         // zoek de bijhorende comments
         $reviews = $em->getRepository('vinoPillarBundle:Review')->findByWijn($product->getId());
         if (!$reviews) { $reviews = null; }

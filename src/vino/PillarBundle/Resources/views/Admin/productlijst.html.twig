@@ -9,9 +9,9 @@
 {% endblock %}
 
 {% block body %}
-    <h1>Onze wijnen</h1>
+    <h1>Wijnen in de database</h1>
     <hr>
-    <table id="productlijst">
+    <table class="productlijst">
         <thead>
             <tr>
                 <td>Naam</td>
@@ -31,11 +31,25 @@
                     <td>{{ product.land.naam }}</td>
                     <td>{{ product.categorie.naam }}</td>
                     <td>&euro; {{ (product.prijs / 100)|number_format(2) }}</td>
-                    <td>{{ product.rating|number_format(2) }}</td>
+                    <td data-order="{{ product.rating }}">
+                        {% set dezeRating = product.rating|round %}
+                        {% if dezeRating == 0 %}
+                            <span class="glyphicon glyphicon-ban-circle" alt="Nog niet gewaardeerd" title="Nog niet gewaardeerd"></span>
+                        {% else %}
+                            <span alt="{{ product.rating|number_format(2) }} / 5" title="{{ product.rating|number_format(2) }} / 5">
+                            {% for i in 1..(dezeRating) %}
+                                <span class="glyphicon glyphicon-star"></span>
+                            {% endfor %}
+                            {% for j in (dezeRating+1)..5 %}
+                                <span class="glyphicon glyphicon-star-empty"></span>
+                            {% endfor %}
+                            </span>
+                        {% endif %}
+                    </td>
                     <td>
-                        <a class="btn btn-default" href="{{ path('vino_pillar_adminwijndetail', {'id': product.id}) }}">Detail</a>
-                        <a class="btn btn-warning" href="{{ path('vino_pillar_bewerkwijn', {'id': product.id}) }}">Bewerk</a>
-                        <a class="btn btn-danger" href="{{ path('vino_pillar_verwijderwijn', {'id': product.id}) }}">Verwijder</a>
+                        <a class="btn btn-default" href="{{ path('vino_pillar_adminwijndetail', {'id': product.id}) }}" alt="Bekijk detail" title="Bekijk detail"><span class="glyphicon glyphicon-eye-open"></span></a>
+                        <a class="btn btn-warning" href="{{ path('vino_pillar_bewerkwijn', {'id': product.id}) }}" alt="Bewerk" title="Bewerk"><span class="glyphicon glyphicon-edit"></span></a>
+                        <a class="btn btn-danger" href="{{ path('vino_pillar_verwijderwijn', {'id': product.id}) }}" alt="Verwijder" title="Verwijder"><span class="glyphicon glyphicon-trash"></span></a>
                     </td>
                 </tr>
             {% endfor %}
@@ -52,8 +66,14 @@
     
     <script type="text/javascript">
         $(document).ready(function(){
-            $('#productlijst').DataTable({
-                    "order": [
+            $('.productlijst').DataTable({
+                "aoColumnDefs": [
+                    { "bSortable": false, "aTargets": [ 6 ] }
+                ],
+                language: {
+                    url: '{{ app.request.basepath }}/js/vendor/datatables.nederlands.txt'
+                },
+                "order": [
                 [ 0, "asc"],
                 [ 1, "asc"],
                 [ 4, "asc"]

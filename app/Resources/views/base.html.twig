@@ -19,6 +19,7 @@
                 'js/vendor/jquery-ui/jquery-ui.theme.min.css'
                 'js/vendor/lightbox/css/lightbox.css'
                 'css/*'
+                filter='cssrewrite'
             %}
                 <link href="{{ asset_url }}" rel="stylesheet" type="text/css" media="screen" />
             {% endstylesheets %}
@@ -53,7 +54,7 @@
                         {% block navuser %}
                             <ul class="nav navbar-nav navbar-right">
                             {% if mandje is defined and mandje != null %}
-                                <li><a href="{{ path('vino_pillar_mandje') }}">Mandje</a></li>
+                                <li><a href="{{ path('vino_pillar_mandje') }}"><span class="glyphicon glyphicon-shopping-cart"></span> <span class="badge">{{ mandje.bestellijn|length }}</span></a></li>
                             {% endif %}
                             {% if app.user %}
                                 {#<li><p class="navbar-text">Ingelogd als: <b>{{ app.user.username }}</b></p></li>#}

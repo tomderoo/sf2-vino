@@ -5,6 +5,7 @@ namespace vino\PillarBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;    // nodig om relatiemappings te kunnen maken
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * @ORM\Entity(repositoryClass="vino\PillarBundle\Entity\Repository\WijnRepository")
@@ -67,6 +68,125 @@ class Wijn {
      * @ORM\OneToMany(targetEntity="Bestellijn", mappedBy="wijn")
      */
     protected $bestellijn;  // deze is nodig om aan te geven dat er many "bestellijn" bij one "wijn" horen
+    
+    /* FILE UPLOAD */
+    
+    /**
+     * 
+     */
+    private $image;
+    
+    private $temp;
+    
+    /**
+     * Sets image.
+     *
+     * @param UploadedFile $$image
+     */
+    public function setImage(UploadedFile $image = null)
+    {
+        $this->image = $image;
+        // check for old path
+        if (isset($this->imgpath)) {
+            // store the old name to delete after the update
+            $this->temp = $this->imgpath;
+            $this->imgpath = null;
+        } else {
+            $this->imgpath = 'initial';
+        }
+    }
+    
+    /**
+     * @ORM\PrePersist()
+     * @ORM\PreUpdate()
+     */
+    public function preUpload()
+    {
+        if (null !== $this->getImage()) {
+            // do whatever you want to generate a unique name
+            //$filename = sha1(uniqid(mt_rand(), true));
+            //$this->imgpath = $filename.'.'.$this->getImage()->guessExtension();
+            // or get the filename from the slug ... :p
+            $this->imgpath = $this->getSlug() . '.' . $this->getImage()->guessExtension();
+        }
+    }
+    
+    /**
+     * @ORM\PostPersist()
+     * @ORM\PostUpdate()
+     */
+    public function upload()
+    {
+        if (null === $this->getImage()) {
+            return;
+        }
+
+        // if there is an error when moving the file, an exception will
+        // be automatically thrown by move(). This will properly prevent
+        // the entity from being persisted to the database on error
+        $this->getImage()->move($this->getUploadRootDir(), $this->imgpath);
+
+        // check if we have an old image
+        if (isset($this->temp)) {
+            // delete the old image
+            unlink($this->getUploadRootDir().'/'.$this->temp);
+            // clear the temp image path
+            $this->temp = null;
+        }
+        $this->image = null;
+    }
+    
+    /**
+     * @ORM\PostRemove()
+     */
+    public function removeUpload()
+    {
+        $file = $this->getAbsolutePath();
+        if ($file) {
+            unlink($file);
+        }
+    }
+
+    /**
+     * Get image.
+     *
+     * @return UploadedFile
+     */
+    public function getImage()
+    {
+        return $this->image;
+    }
+    
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $imgpath;
+    
+    public function setImgpath($imgpath) {
+        $this->imgpath = $imgpath;
+    }
+    
+    public function getImgpath() {
+        return $this->imgpath;
+    }
+    
+    public function getAbsolutePath() {
+        return null === $this->imgpath ? null : $this->getUploadRootDir().'/'.$this->imgpath;
+    }
+    
+    public function getWebPath() {
+        return null === $this->imgpath ? null : $this->getUploadDir().'/'.$this->imgpath;
+    }
+    
+    public function getUploadRootDir() {
+        // absolute dir path here uploaded docs should be saved
+        return __DIR__.'/../../../../web/'.$this->getUploadDir();
+    }
+    
+    public function getUploadDir() {
+        // get rid of the __DIR__ part for viewing reasons
+        return 'uploads/img';
+    }
     
     public function __construct(){
         $this->review = new ArrayCollection();

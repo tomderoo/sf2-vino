@@ -123,7 +123,7 @@
             {% endif %}
         </a>
         {% if bestelling.bestelstatus == 1 %}
-            <a class="btn btn-danger" href="{{ path('vino_pillar_killbestelling', {'id': bestelling.id}) }}">Verwijder deze bestelling</a>
+            <a class="btn btn-danger" href="{{ path('vino_pillar_killbestelling', {'id': bestelling.id}) }}" alt="Verwijder deze bestelling" title="Verwijder deze bestelling"><span class="glyphicon glyphicon-trash"></span></a>
         {% endif %}
     {% else %}
         <p>De aangezochte bestelling bestaat niet.</p>

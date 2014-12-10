@@ -12,7 +12,7 @@ class CategorieType extends AbstractType
     {
         $builder->add('naam', 'text', array ('attr' => array('class' => 'form-control')));
         $builder->add('omschrijving', 'textarea', array ('attr' => array('class' => 'form-control')));
-        $builder->add('save', 'submit', array('attr' => array('class' => 'btn btn-default'), 'label' => 'Opslaan'));
+        $builder->add('save', 'submit', array('attr' => array('class' => 'btn btn-info'), 'label' => 'Opslaan'));
     }
 
     public function setDefaultOptions(OptionsResolverInterface $resolver)

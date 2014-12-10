@@ -135,10 +135,20 @@ div#mainbody {
     padding: 15px;
 }
 
-/* * * * * FLASHMESSAGE INFO * * * * */
-.infomsg {
-    border: 1px solid #060;
-    background-color: #cfc;
-    color: #060;
+/* * * * * PRODUCTDETAIL * * * * */
+
+.product-row {
+    position: relative;
+    clear: both;
+}
+
+.product-image {
+    text-align: center;
+    border-radius: 20px;
+    box-shadow: #500 1px 1px 15px;
     padding: 20px;
+}
+
+.product-text {
+    padding: 20px 0;
 }

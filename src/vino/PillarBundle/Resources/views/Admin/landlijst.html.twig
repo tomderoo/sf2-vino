@@ -25,8 +25,8 @@
                     <td>{{ cat.naam }}</td>
                     <td>{{ cat.omschrijving }}</td>
                     <td>
-                        <a class="btn btn-warning" href="{{ path('vino_pillar_bewerkland', {'id': cat.id}) }}"><span class="glyphicon glyphicon-trash"></span> Bewerk</a>
-                        <a class="btn btn-danger" href="{{ path('vino_pillar_verwijderland', {'id': cat.id}) }}">Verwijder</a>
+                        <a class="btn btn-warning" href="{{ path('vino_pillar_bewerkland', {'id': cat.id}) }}" alt="Bewerk" title="Bewerk"><span class="glyphicon glyphicon-edit"></span></a>
+                        <a class="btn btn-danger" href="{{ path('vino_pillar_verwijderland', {'id': cat.id}) }}" alt="Verwijder" title="Verwijder"><span class="glyphicon glyphicon-trash"></span></a>
                     </td>
                 </tr>
             {% endfor %}
@@ -44,6 +44,12 @@
     <script type="text/javascript">
         $(document).ready(function(){
             $('#productlijst').DataTable({
+                "aoColumnDefs": [
+                    { "bSortable": false, "aTargets": [ 2 ] }
+                ],
+                language: {
+                    url: '{{ app.request.basepath }}/js/vendor/datatables.nederlands.txt'
+                },
                     "order": [
                 [ 0, "asc"]
             ]});
