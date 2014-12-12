@@ -65,7 +65,7 @@ header {
     margin-top: 51px;
     position: relative;
     /*top: 49px;*/
-    background-image: url('../../img/header-back.png');
+    background-image: url('../img/header-back.png');
     background-repeat: no-repeat;
     background-size: cover;
     background-position: top right;
@@ -138,17 +138,161 @@ div#mainbody {
 /* * * * * PRODUCTDETAIL * * * * */
 
 .product-row {
-    position: relative;
-    clear: both;
+    box-sizing: border-box;
+    margin: 0;
+    border-radius: 20px;
+    box-shadow: #500 1px 1px 15px;
+    padding: 10px;
+    margin-bottom: 20px;
+    overflow: auto;
 }
 
 .product-image {
+    box-sizing: border-box;
     text-align: center;
     border-radius: 20px;
-    box-shadow: #500 1px 1px 15px;
-    padding: 20px;
+    /*box-shadow: #500 1px 1px 15px;*/
+    margin: 20px 0;
 }
 
 .product-text {
-    padding: 20px 0;
+    box-sizing: border-box;
+    padding: 0;
+}
+
+.product-text dl dt {
+    /*width: 150px;*/
+}
+
+.product-text dl dd {
+    /*margin-left: 130px;*/
+    margin-bottom: 10px;
+    padding-right: 20px;
+}
+
+.product-price {
+    padding: 0 0;
+    font-weight: bold;
+    text-align: center;
+    background-color: #a55;
+    border-radius: 20px;
+    color: whitesmoke;
+}
+
+.product-price p {
+    padding: 20px;
+    font-size: 2em;
+}
+
+.product-price p span {
+    font-size: 1.75em;
+}
+
+.product-price a.btn {
+    font-size: 2.5em;
+    width: 100%;
+    border-radius: 0 0 20px 20px;
+}
+
+/* * * * * BESTELLING * * * * */
+
+.productlijst {
+    width: 100%;
+    border: 1px solid #500;
+}
+
+.productlijst tbody tr td {
+    padding: 3px 10px;
+}
+
+.productlijst-bestellijn td:nth-child(1), .productlijst-productlijn-info-sub td:nth-child(1) {
+    text-align: right;
+    width: 8%;
+}
+
+.productlijst-bestellijn td:nth-child(2), .productlijst-productlijn-info-sub td:nth-child(2) {
+    text-align: left;
+    width: 62%;
+}
+
+.productlijst-bestellijn td:nth-child(3), .productlijst-productlijn-info-sub td:nth-child(3) {
+    text-align: center;
+    width: 8%;
+}
+
+.productlijst-bestellijn td:nth-child(4), .productlijst-productlijn-info-sub td:nth-child(4) {
+    text-align: right;
+    width: 11%;
+}
+
+.productlijst-bestellijn td:nth-child(5), .productlijst-productlijn-info-sub td:nth-child(5) {
+    text-align: right;
+    width: 11%;
+}
+
+.productlijst-productlijn-info-top,
+.productlijst-verzending-info-top,
+.productlijst-bestelling-subtotaal {
+    font-weight: bold;
+    background-color: #a55;
+    color: white;
+}
+
+.productlijst-verpakkinglijn-info-top {
+    background-color: #efdcdc;
+}
+
+.productlijst-productlijn-info-sub, .productlijst-verpakkinglijn-info-sub {
+    background-color: #ffecec;
+}
+
+.productlijst-verpakkinglijn-info-sub td:nth-child(1), .productlijst-verpakkinglijn-item td:nth-child(1) {
+    text-align: right;
+}
+
+.productlijst-verpakkinglijn-info-sub td:nth-child(3), .productlijst-verpakkinglijn-item td:nth-child(3) {
+    text-align: right;
+}
+
+.productlijst-verpakkinglijn-info-sub td:nth-child(4), .productlijst-verpakkinglijn-item td:nth-child(4) {
+    text-align: right;
+}
+
+.productlijst-verzending-keuze td:nth-child(3) {
+    text-align: right;
+}
+
+.productlijst-bestelling-subtotaal td:last-child {
+    text-align: right;
+}
+.productlijst .btn {
+    padding: 2px 5px;
+}
+
+.productlijst-top-1 {
+    font-weight: bold;
+    background-color: #a55;
+    color: white;
+}
+
+.productlijst-top-2 {
+    background-color: #efdcdc;
+}
+
+.productlijst-sub {
+    background-color: #ffecec;
+}
+
+.productlijst-bedrag {
+    text-align: right;
+}
+
+.productlijst-10pc {
+    width: 10%;
+}
+
+.productlijst-acties {
+    text-align: center;
+    width: 15%;
+    min-width: 140px;
 }

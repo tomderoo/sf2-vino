@@ -40,9 +40,11 @@
                             {% for i in 1..(dezeRating) %}
                                 <span class="glyphicon glyphicon-star"></span>
                             {% endfor %}
-                            {% for j in (dezeRating+1)..5 %}
-                                <span class="glyphicon glyphicon-star-empty"></span>
-                            {% endfor %}
+                            {% if dezeRating < 5 %}
+                                    {% for j in (dezeRating+1)..5 %}
+                                        <span class="glyphicon glyphicon-star-empty"></span>
+                                    {% endfor %}
+                            {% endif %}
                             </span>
                         {% endif %}
                     </td>

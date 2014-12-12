@@ -104,10 +104,10 @@ class Wijn {
     {
         if (null !== $this->getImage()) {
             // do whatever you want to generate a unique name
-            //$filename = sha1(uniqid(mt_rand(), true));
-            //$this->imgpath = $filename.'.'.$this->getImage()->guessExtension();
+            $filename = sha1(uniqid(mt_rand(), true));
+            $this->imgpath = $filename.'.'.$this->getImage()->guessExtension();
             // or get the filename from the slug ... :p
-            $this->imgpath = $this->getSlug() . '.' . $this->getImage()->guessExtension();
+            //$this->imgpath = $this->getSlug() . '.' . $this->getImage()->guessExtension();
         }
     }
     

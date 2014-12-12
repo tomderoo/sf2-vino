@@ -1,0 +1,43 @@
+{# src/vino/PillarBundle/Resources/views/Admin/bewerkverpakking.html.twig #}
+
+{% extends '::base.html.twig' %}
+
+{% block body %}
+    <h1>Verpakkingtype bewerken</h1>
+    <div class="well well-lg">
+        {% if form is defined %}
+            {{ form_start(form) }}
+                {{ form_errors(form) }}
+
+                {# form_row(form.naam) #}
+                <div class="form-group">
+                    {{ form_label(form.naam, 'Omschrijving', {'label_attr': {'class': 'col-sm-2 control-label'}}) }}
+                    <div class="col-sm-10">
+                    {{ form_errors(form.naam) }}
+                    {{ form_widget(form.naam) }}
+                    </div>
+                </div>
+
+                {# form_row(form.aantalFlessen) #}
+                <div class="form-group">
+                    {{ form_label(form.aantalFlessen, 'Aantal flessen', {'label_attr': {'class': 'col-sm-2 control-label'}}) }}
+                    <div class="col-sm-2">
+                    {{ form_errors(form.aantalFlessen) }}
+                    {{ form_widget(form.aantalFlessen) }}
+                    </div>
+                </div>
+
+                {# form_row(form.prijs) #}
+                <div class="form-group">
+                    {{ form_label(form.prijs, 'Prijs (in eurocent)', {'label_attr': {'class': 'col-sm-2 control-label'}}) }}
+                    <div class="col-sm-2">
+                    {{ form_errors(form.prijs) }}
+                    {{ form_widget(form.prijs) }}
+                    </div>
+                </div>
+
+                <div class="col-sm-2"></div>
+            {{ form_end(form) }}
+        {% endif %}
+    </div>
+{% endblock %}

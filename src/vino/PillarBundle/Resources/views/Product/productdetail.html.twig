@@ -1,63 +1,13 @@
 {# src/vino/PillarBundle/Resources/views/Product/productdetail.html.twig #}
 
-{% if form %}
-    {% form_theme form 'vinoPillarBundle:Form:fields.html.twig' %}
-{% endif %}
-
 {% extends '::base.html.twig' %}
 
 {% block body %}
-    <h1>{{ product.naam }} ({{ product.jaar }})</h1>
-    <div class="product-image">
-        <img src="{{ product.imgpath }}">
-    </div>
-    <div class="product-text">
-        <p>Gebruikerswaardering:
-            {% set dezeRating = product.rating|round %}
-            {% if dezeRating == 0 %}
-                nog niet gewaardeerd...
-            {% else %}
-                <span alt="{{ product.rating|number_format(2) }} / 5" title="{{ product.rating|number_format(2) }} / 5">
-                {% for i in 1..(dezeRating) %}
-                    <span class="glyphicon glyphicon-star"></span>
-                {% endfor %}
-                {% for j in (dezeRating+1)..5 %}
-                    <span class="glyphicon glyphicon-star-empty"></span>
-                {% endfor %}
-                </span>
-            {% endif %}
-        </p>
-        <p>{{ product.omschrijving }}</p>
-        <p>Categorie: {{ product.categorie.naam }}</p>
-        <p>Afkomstig van {{ product.land.naam }}: {{ product.land.omschrijving }}</p>
-        <hr>
-        <div class="productdetail-prijs">
-            &euro; {{ (product.prijs/100)|number_format(2) }}
-        </div>
-        <div class="productdetail-actie">
-            <a class="btn btn-warning" href="{{ path('vino_pillar_productinmandje', {'slug': product.slug}) }}" alt="In mandje" title="In mandje"><span class="glyphicon glyphicon-shopping-cart"></span></a>
-        </div>
-    </div>
-        
+    {{ include('vinoPillarBundle::Snippets/product_cassette.html.twig') }}
     {% if reviews != null %}
-        <hr>
         <h3>Gebruikersreviews</h3>
         {% for review in reviews %}
-            <div class="well">
-                <p><b>{{ review.titel }}</b> (door <b>{{ review.klant.vNaam }} {{ review.klant.aNaam }}</b>)</p>
-                <p><i>Datum: {{ review.datum|date('d-m-Y') }}</i></p>
-                <blockquote>{{ review.tekst }}</blockquote>
-                <p><b>Waardering:
-                        <span title="({{ review.rating }} / 5)">
-                        {% for i in 1..(review.rating) %}
-                            <span class="glyphicon glyphicon-star"></span>
-                        {% endfor %}
-                        {% for j in (review.rating+1)..5 %}
-                            <span class="glyphicon glyphicon-star-empty"></span>
-                        {% endfor %}
-                        </span>    
-                    </b></p>
-            </div>
+            {{ include('vinoPillarBundle::Snippets/product_review.html.twig') }}
         {% endfor %}
     {% endif %}
         <h3>Geef uw mening</h3>

@@ -21,64 +21,75 @@
         </div>
         <h3>Bestelling</h3>
         <p>Besteld op: {{ bestelling.datum|date('d-m-Y') }}</p>
-        <table class="productlijst" border="1">
+        <table class="productlijst">
             <tbody>
                 {% set subtotaalBestelling = 0 %}
                 {% set aantalFlessen = 0 %}
                 {% for bestellijn in bestelling.bestellijn %}
                     {% set aantalFlessen = aantalFlessen + bestellijn.aantal %}
                     {% set subtotaalBestelling = subtotaalBestelling + (bestellijn.wijn.prijs * bestellijn.aantal) %}
-                    <tr class="productlijst-verpakkinglijn-info-top">
+                    <tr class="productlijst-top-1">
                         <td colspan="5">
                             Product
                         </td>
                     </tr>
-                    <tr class="productlijst-verpakkinglijn-info-sub">
-                        <td>Aantal</td>
+                    <tr class="productlijst-sub">
+                        <td class="productlijst-bedrag productlijst-10pc">Aantal</td>
                         <td>Naam</td>
-                        <td>Jaar</td>
-                        <td>Prijs / stuk</td>
-                        <td>Subtotaal</td>
+                        <td class="productlijst-bedrag productlijst-10pc">Jaar</td>
+                        <td class="productlijst-bedrag productlijst-10pc">Prijs / stuk</td>
+                        <td class="productlijst-bedrag productlijst-10pc">Subtotaal</td>
                     </tr>
                     <tr class="productlijst-bestellijn">
-                        <td>{{ bestellijn.aantal }}</td>
+                        <td class="productlijst-bedrag">{{ bestellijn.aantal }}</td>
                         <td>{{ bestellijn.wijn.naam }}</td>
-                        <td>{{ bestellijn.wijn.jaar }}</td>
-                        <td>&euro; {{ (bestellijn.wijn.prijs / 100)|number_format(2) }}</td>
-                        <td>
+                        <td class="productlijst-bedrag">{{ bestellijn.wijn.jaar }}</td>
+                        <td class="productlijst-bedrag">&euro; {{ (bestellijn.wijn.prijs / 100)|number_format(2) }}</td>
+                        <td class="productlijst-bedrag">
                             &euro; {{ (bestellijn.wijn.prijs * bestellijn.aantal / 100)|number_format(2) }}
                         </td>
                     </tr>
-                    <tr class="productlijst-verpakkinglijn-info-top">
+                    <tr class="productlijst-top-2">
                         <td colspan="5">
                             Verpakking
                         </td>
                     </tr>
-                    <tr class="productlijst-verpakkinglijn-info-sub">
-                        <td>Aantal</td>
+                    <tr class="productlijst-sub">
+                        <td class="productlijst-bedrag">Aantal</td>
                         <td colspan="2">Omschrijving</td>
-                        <td>Prijs / stuk</td>
-                        <td>Subtotaal</td>
+                        <td class="productlijst-bedrag">Prijs / stuk</td>
+                        <td class="productlijst-bedrag">Subtotaal</td>
                     </tr>
+                    {% set aantalVerpakteFlessen = 0 %}
                     {% for verpakkingtype in bestellijn.verpakkinglijn %}
                         {% set subtotaalBestelling = subtotaalBestelling + (verpakkingtype.verpakking.prijs * verpakkingtype.aantal) %}
-                        <tr class="productlijst-verpakkinglijn-item">
-                            <td>{{ verpakkingtype.aantal }}</td>
+                        {% set aantalVerpakteFlessen = aantalVerpakteFlessen + (verpakkingtype.aantal * verpakkingtype.verpakking.aantalFlessen) %}
+                        <tr>
+                            <td class="productlijst-bedrag">{{ verpakkingtype.aantal }}</td>
                             <td colspan="2">{{ verpakkingtype.verpakking.naam }}</td>
-                            <td>&euro; {{ (verpakkingtype.verpakking.prijs / 100)|number_format(2) }}</td>
-                            <td>
+                            <td class="productlijst-bedrag">&euro; {{ (verpakkingtype.verpakking.prijs / 100)|number_format(2) }}</td>
+                            <td class="productlijst-bedrag">
                                 &euro; {{ (verpakkingtype.verpakking.prijs * verpakkingtype.aantal / 100)|number_format(2) }}
                             </td>
                         </tr>
                     {% endfor %}
+                    {% set aantalLosseFlessen = bestellijn.aantal - aantalVerpakteFlessen %}
+                    {% if aantalLosseFlessen > 0 %}
+                        <tr>
+                            <td class="productlijst-bedrag">{{ aantalLosseFlessen }}</td>
+                            <td colspan="2">Losse fles</td>
+                            <td class="productlijst-bedrag">&euro; 0.00</td>
+                            <td class="productlijst-bedrag">&euro; 0.00</td>
+                        </tr>
+                    {% endif %}
                 {% endfor %}
-                <tr class="productlijst-verzending-info-top">
+                <tr class="productlijst-top-2">
                     <td colspan="5">
                         Leverwijze
                     </td>
                 </tr>
-                <tr class="productlijst-verzending-keuze">
-                    <td>&nbsp;</td>
+                <tr>
+                    <td class="productlijst-bedrag">&nbsp;</td>
                     <td colspan="3">
                         {% if bestelling.leverwijze == 0 %}
                             Afhaling in magazijn
@@ -86,7 +97,7 @@
                             Levering aan huis
                         {% endif %}
                     </td>
-                    <td>
+                    <td class="productlijst-bedrag">
                         {% if bestelling.leverwijze == 0 %}
                             &euro; 0.00
                         {% else %}
@@ -99,9 +110,9 @@
                         {% endif %}
                     </td>
                 </tr>
-                <tr class="productlijst-bestelling-subtotaal">
+                <tr class="productlijst-top-1">
                     <td colspan="4">Eindtotaal bestelling</td>
-                    <td>
+                    <td class="productlijst-bedrag">
                         &euro; {{ (subtotaalBestelling / 100)|number_format(2) }}
                     </td>
                 </tr>

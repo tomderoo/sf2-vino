@@ -1,0 +1,61 @@
+{# src/vino/PillarBundle/Resources/views/Admin/verpakkinglijst.html.twig #}
+
+{% extends '::base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    
+    <link href="http://cdn.datatables.net/1.10.4/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css" media="screen" />
+{% endblock %}
+
+{% block body %}
+    <h1>Overzicht verpakkingen</h1>
+    <hr>
+    <table id="productlijst">
+        <thead>
+            <tr>
+                <td>Naam</td>
+                <td>Aantal&nbsp;flessen</td>
+                <td>Prijs</td>
+                <td>&nbsp;</td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for verpakking in verpakkinglijst %}
+                <tr>
+                    <td>{{ verpakking.naam }}</td>
+                    <td>{{ verpakking.aantalFlessen }}</td>
+                    <td>&euro; {{ (verpakking.prijs/100)|number_format(2) }}</td>
+                    <td>
+                        <a class="btn btn-warning" href="{{ path('vino_pillar_bewerkverpakking', {'id': verpakking.id}) }}" alt="Bewerk" title="Bewerk"><span class="glyphicon glyphicon-edit"></span></a>
+                        <a class="btn btn-danger" href="{{ path('vino_pillar_verwijderverpakking', {'id': verpakking.id}) }}" alt="Verwijder" title="Verwijder"><span class="glyphicon glyphicon-trash"></span></a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <hr>
+    <p><a class="btn btn-warning" href="{{ path('vino_pillar_nieuweverpakking') }}">Voeg een nieuwe verpakking toe</a></p>        
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    
+    <script src="http://cdn.datatables.net/1.10.4/js/jquery.dataTables.min.js" type="text/javascript"></script>
+    
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('#productlijst').DataTable({
+                "aoColumnDefs": [
+                    { "bSortable": false, "aTargets": [ 3 ] }
+                ],
+                language: {
+                    url: '{{ app.request.basepath }}/js/vendor/datatables.nederlands.txt'
+                },
+                    "order": [
+                [ 1, "asc"],
+                [ 2, "asc"]
+            ]});
+        });
+    </script>
+{% endblock %}

@@ -510,7 +510,7 @@ class MandjeController extends Controller {
         }
         
         // het mandje ledigen
-        //$session->set('mandje', null);
+        $session->set('mandje', null);
         
         // maak flashmessage
         $infoMsg = 'Uw bestelling werd succesvol geplaatst!';

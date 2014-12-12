@@ -123,6 +123,22 @@ vino_pillar_verwijderreview:
     path:       /admin/verwijderreview/{wijnid}/{id}
     defaults:   { _controller: vinoPillarBundle:Admin:verwijderReview }
 
+vino_pillar_alleverpakkingen:
+    path:       /admin/verpakkingen
+    defaults:   { _controller: vinoPillarBundle:Admin:alleVerpakkingen }
+    
+vino_pillar_nieuweverpakking:
+    path:       /admin/nieuweverpakking
+    defaults:   { _controller: vinoPillarBundle:Admin:nieuweVerpakking }
+    
+vino_pillar_bewerkverpakking:
+    path:       /admin/bewerkverpakking/{id}
+    defaults:   { _controller: vinoPillarBundle:Admin:bewerkVerpakking }
+    
+vino_pillar_verwijderverpakking:
+    path:       /admin/verwijderverpakking/{id}
+    defaults:   { _controller: vinoPillarBundle:Admin:verwijderVerpakking }
+
 vino_pillar_allecats:
     path:       /admin/allecats
     defaults:   { _controller: vinoPillarBundle:Admin:alleCats }

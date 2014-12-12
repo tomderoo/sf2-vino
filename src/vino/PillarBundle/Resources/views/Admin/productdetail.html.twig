@@ -3,62 +3,23 @@
 {% extends '::base.html.twig' %}
 
 {% block body %}
-    <h1>{{ product.naam }} ({{ product.jaar }})</h1>
-    <div class="">
-        <div class="product-image col-sm-2">
-            <img src="{{ app.request.basePath }}/uploads/img/{{ product.imgpath }}" alt="{{ product.naam }} ({{ product.jaar }})" title="{{ product.naam }} ({{ product.jaar }})">
+    <div class="row">
+        <div class="col-sm-11">
+        {{ include('vinoPillarBundle::Snippets/product_cassette.html.twig') }}
         </div>
-        <div class="product-text col-sm-10">
-            <dl class="dl-horizontal">
-                <dt>Omschrijving</dt>
-                <dd>{{ product.omschrijving }}</dd>
-                <dt>Waardering</dt>
-                <dd>
-                    {% set dezeRating = product.rating|round %}
-                    {% if dezeRating == 0 %}
-                        <span class="glyphicon glyphicon-ban-circle" alt="Nog niet gewaardeerd" title="Nog niet gewaardeerd"></span>
-                    {% else %}
-                        <span alt="{{ product.rating|number_format(2) }} / 5" title="{{ product.rating|number_format(2) }} / 5">
-                        {% for i in 1..(dezeRating) %}
-                            <span class="glyphicon glyphicon-star"></span>
-                        {% endfor %}
-                        {% for j in (dezeRating+1)..5 %}
-                            <span class="glyphicon glyphicon-star-empty"></span>
-                        {% endfor %}
-                        </span>
-                    {% endif %}
-                </dd>
-                <dt>Categorie</dt>
-                <dd>{{ product.categorie.naam }}<br>
-                    <span style="font-size: 0.9em">{{ product.categorie.omschrijving }}</span>
-                </dd>
-                <dt>Afkomst</dt>
-                <dd>{{ product.land.naam }}<br>
-                    <span style="font-size: 0.9em">{{ product.land.omschrijving }}</span>
-                </dd>
-                <dt>Prijs</dt>
-                <dd><span style="font-size: 2.9em">&euro; {{ (product.prijs/100)|number_format(2) }}</span></dd>
-            </dl>
+        <div class="col-sm-1 productdetail-actie">
+            <a class="btn btn-default" href="{{ path('vino_pillar_allewijnen') }}" alt="Wijnen overzicht" title="Wijnen overzicht"><span class="glyphicon glyphicon-list"></span></a>
+            <a class="btn btn-warning" href="{{ path('vino_pillar_bewerkwijn', {'id': product.id}) }}" alt="Bewerk" title="Bewerk"><span class="glyphicon glyphicon-edit"></span></a>
+            <a class="btn btn-danger" href="{{ path('vino_pillar_verwijderwijn', {'id': product.id}) }}" alt="Verwijder" title="Verwijder"><span class="glyphicon glyphicon-trash"></span></a>
         </div>
     </div>
-    <hr style="clear: both;">
-    <div class="productdetail-actie">
-        <a class="btn btn-default" href="{{ path('vino_pillar_allewijnen') }}">Overzicht wijnen</a>
-        <a class="btn btn-warning" href="{{ path('vino_pillar_bewerkwijn', {'id': product.id}) }}" alt="Bewerk" title="Bewerk"><span class="glyphicon glyphicon-edit"></span></a>
-        <a class="btn btn-danger" href="{{ path('vino_pillar_verwijderwijn', {'id': product.id}) }}" alt="Verwijder" title="Verwijder"><span class="glyphicon glyphicon-trash"></span></a>
-    </div>
-    <hr>
     {% if reviews != null %}
         <h3>Gebruikersreviews</h3>
         {% for review in reviews %}
-            <div class="well">
-                <p><b>'{{ review.titel }}'</b> (door <b>{{ review.klant.vNaam }} {{ review.klant.aNaam }}</b>)</p>
-                <p><i>Datum: {{ review.datum|date('d-m-Y') }}</i></p>
-                <blockquote>{{ review.tekst }}</blockquote>
-                <p><b>Rating: {{ review.rating }} / 5</b></p>
-                <hr>
-                <p><a class="btn btn-danger" href="{{ path('vino_pillar_verwijderreview', {'wijnid': product.id, 'id': review.id})}}" title="Verwijder deze review" alt="Verwijder deze review"><span class="glyphicon glyphicon-trash"></span></a></p>
+            <div class="col-sm-11">
+            {{ include('vinoPillarBundle::Snippets/product_review.html.twig') }}
             </div>
+            <div class="col-sm-1"><a class="btn btn-danger" href="{{ path('vino_pillar_verwijderreview', {'wijnid': product.id, 'id': review.id})}}" title="Verwijder deze review" alt="Verwijder deze review"><span class="glyphicon glyphicon-trash"></span></a></div>
         {% endfor %}
     {% else %}
         <p>Geen gebruikersreviews...</p>

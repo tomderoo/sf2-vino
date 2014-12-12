@@ -8,10 +8,12 @@ use Symfony\Component\HttpFoundation\Request;
 use vino\PillarBundle\Entity\Categorie;
 use vino\PillarBundle\Entity\Wijn;
 use vino\PillarBundle\Entity\Land;
+use vino\PillarBundle\Entity\Verpakking;
 
 use vino\PillarBundle\Form\Type\WijnType;
 use vino\PillarBundle\Form\Type\CategorieType;
 use vino\PillarBundle\Form\Type\LandType;
+use vino\PillarBundle\Form\Type\VerpakkingType;
 
 use Cocur\Slugify\Slugify;
 
@@ -169,7 +171,7 @@ class AdminController extends Controller {
             //$slug = $this->slugThis($form['naam']->getData()) . '-' . $this->slugThis($form['jaar']->getData());
             //$slug = $this->slugThis($form['naam']->getData());
             $wijn->setSlug($slug);
-            //$wijn->upload(); // ENKEL NODIG INDIEN ZONDER CALLBACK
+            //$wijn->upload(); // ENKEL NODIG INDIEN ZONDER CALLBACK IN DE ENTITY!
             $em->persist($wijn);
             $em->flush();
             
@@ -239,7 +241,7 @@ class AdminController extends Controller {
             $em->flush();
             
             // geef de melding weer en redirect
-            $this->get('session')->getFlashBag()->add('msg_succes', 'Wijn succesvol bewerkt!');
+            $this->get('session')->getFlashBag()->add('msg_success', 'Wijn succesvol bewerkt!');
             return $this->redirect($this->generateUrl('vino_pillar_allewijnen'));
         }
         
@@ -266,6 +268,14 @@ class AdminController extends Controller {
             $this->get('session')->getFlashBag()->add('msg_error', $infoMsg);
         } else {
             // bestelling bestaat wel
+            // checken of de wijn niet ergens in een bestelling zit
+            if ($em->getRepository('vinoPillarBundle:Bestellijn')->findOneByWijn($wijn)) {
+                $checkMsg = 'Kan wijn niet verwijderen omdat er actieve bestellingen zijn met deze wijn. Verwijder eerst de verwante <a href="' . $this->generateUrl('vino_pillar_allebestellingen') . '">bestellingen</a>.';
+                $this->get('session')
+                    ->getFlashBag()
+                    ->add('msg_error', $checkMsg);
+                return $this->redirect($this->generateUrl('vino_pillar_allewijnen'));
+            }
             $em->remove($wijn);
             $em->flush();
             $infoMsg = 'Wijn succesvol verwijderd.';
@@ -273,6 +283,147 @@ class AdminController extends Controller {
         }
         
         return $this->redirect($this->generateUrl('vino_pillar_allewijnen'));
+    }
+    
+    /*
+     * * * * * VERPAKKING-FUNCTIES * * * * *
+     */
+    
+    /* * * ALLE VERPAKKINGEN * * */
+    public function alleVerpakkingenAction(Request $request) {
+        // laadt de sessie
+        $session = $request->getSession();
+        // laadt de user en mandje
+        $user = $this->getUser();
+        $mandje = $session->get('mandje');
+        // laadt de manager en lijst
+        $em = $this->getDoctrine()->getManager();
+        $alleVerpakkingen = $em->getRepository('vinoPillarBundle:Verpakking')->findAllSortedByFlessen();
+        
+        if (!$alleVerpakkingen) {
+            // er zijn geen categorieën
+            $this->get('session')->getFlashBag()->add('msg_warning', 'Er zijn nog geen verpakkingen in de database - <a href="' . $this->generateUrl('vino_pillar_nieuweverpakking'). '">voeg een nieuwe verpakking toe</a>.');
+            $this->redirect($this->generateUrl('vino_pillar_nieuweverpakking'));
+        }
+        
+        return $this->render('vinoPillarBundle:Admin:verpakkinglijst.html.twig', array(
+            'user' => $user,
+            'mandje' => $mandje,
+            'verpakkinglijst' => $alleVerpakkingen,
+        ));
+    }
+    
+    /* * * NIEUWE VERPAKKING * * */
+    
+    public function nieuweVerpakkingAction(Request $request) {
+        // laadt de sessie
+        $session = $request->getSession();
+        // laadt de user en mandje
+        $user = $this->getUser();
+        $mandje = $session->get('mandje');
+        // laadt de manager
+        $em = $this->getDoctrine()->getManager();
+        
+        // maak het form
+        $verpakking = new Verpakking(); // roep de entity "verpakking" aan
+        // maak een form op basis van het form-type VerpakkingType
+        $form = $this->createForm(new VerpakkingType(), $verpakking, array('attr' => array('class' => 'form-horizontal')));
+        
+        $form->handleRequest($request);
+
+        // indien sprake is van een ingediend form, doe dit
+        if ($form->isValid()) {
+            // voer acties uit voor een valide form: in database plaatsen
+            $em->persist($verpakking);
+            $em->flush();
+            
+            // geef de melding weer en redirect
+            $infoMsg = 'Verpakking succesvol toegevoegd!';
+            $this->get('session')->getFlashBag()->add('msg_success', $infoMsg);
+            return $this->redirect($this->generateUrl('vino_pillar_alleverpakkingen'));
+        }
+        $form_view = $form->createView();
+        
+        return $this->render('vinoPillarBundle:Admin:nieuweverpakking.html.twig', array(
+            'user' => $user,
+            'mandje' => $mandje,
+            'form' => $form_view,
+                ));
+    }
+    
+    /* * * BEWERK VERPAKKING * * */
+    
+    public function bewerkVerpakkingAction(Request $request, $id) {
+        // laadt de sessie
+        $session = $request->getSession();
+        // laadt de user en mandje
+        $user = $this->getUser();
+        $mandje = $session->get('mandje');
+        // laadt de manager
+        $em = $this->getDoctrine()->getManager();
+        
+        // roep de verpakking uit de database
+        if (!$oudeVerpakking = $em->getRepository('vinoPillarBundle:Verpakking')->findOneById($id)) {
+            $infoMsg = 'Verpakking bestaat niet - bewerken kon niet worden uitgevoerd.';
+            $this->get('session')
+                    ->getFlashBag()
+                    ->add('msg_error', $infoMsg);
+            return $this->redirect($this->generateUrl('vino_pillar_alleverpakkingen'));
+        }
+        
+        // maak een form op basis van het form-type VerpakkingType
+        $form = $this->createForm(new VerpakkingType(), $oudeVerpakking, array('attr' => array('class' => 'form-horizontal')));
+        
+        $form->handleRequest($request);
+
+        // indien sprake is van een ingediend form, doe dit
+        if ($form->isValid()) {
+            // voer acties uit voor een valide form: in database plaatsen
+            $em->persist($oudeVerpakking);
+            $em->flush();
+            
+            // geef de melding weer en redirect
+            $infoMsg = 'Verpakking succesvol aangepast!';
+            $this->get('session')
+                    ->getFlashBag()
+                    ->add('msg_success', $infoMsg);
+            return $this->redirect($this->generateUrl('vino_pillar_alleverpakkingen'));
+        }
+        $form_view = $form->createView();
+        
+        return $this->render('vinoPillarBundle:Admin:bewerkverpakking.html.twig', array(
+            'user' => $user,
+            'mandje' => $mandje,
+            'form' => $form_view,
+                ));
+    }
+    
+    /* * * VERWIJDER VERPAKKING * * */
+    
+    public function verwijderVerpakkingAction($id) {
+        $em = $this->getDoctrine()->getManager();
+        
+        // laadt de verpakking
+        if(!$verpakking = $em->getRepository('vinoPillarBundle:Verpakking')->findOneById($id)) {
+            // het onding bestaat niet
+            $infoMsg = 'Verpakking bestaat niet - verwijderen kon niet worden uitgevoerd.';
+            $this->get('session')->getFlashBag()->add('msg_error', $infoMsg);
+        } else {
+            // het onding bestaat wel
+            // checken of verpakking niet in bestaande verpakkinglijnen zit
+            if ($em->getRepository('vinoPillarBundle:Verpakkinglijn')->findOneByVerpakking($verpakking)) {
+                $checkMsg = 'Kan verpakking niet verwijderen omdat er bestellingen zijn met deze verpakking. Verwijder of bewerk eerst de verwante <a href="' . $this->generateUrl('vino_pillar_allebestellingen') . '">bestellingen</a>.';
+                $this->get('session')
+                    ->getFlashBag()
+                    ->add('msg_error', $checkMsg);
+                return $this->redirect($this->generateUrl('vino_pillar_alleverpakkingen'));
+            }
+            $em->remove($verpakking);
+            $em->flush();
+            $infoMsg = 'Verpakking succesvol verwijderd.';
+            $this->get('session')->getFlashBag()->add('msg_success', $infoMsg);
+        }
+        return $this->redirect($this->generateUrl('vino_pillar_alleverpakkingen'));
     }
     
     /*

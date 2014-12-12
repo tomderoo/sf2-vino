@@ -61,6 +61,9 @@ vino\PillarBundle\Entity\Wijn:
             - NotBlank: ~
             - Type:
                 type: integer
+            - Range:
+                min: 0
+                minMessage: Geen wijnen van voor Christus...
         land:
             - NotBlank: ~
         categorie:
@@ -101,3 +104,20 @@ vino\PillarBundle\Entity\Land:
             - NotBlank: ~
         omschrijving:
             - NotBlank: ~
+
+vino\PillarBundle\Entity\Verpakking:
+    properties:
+        naam:
+            - NotBlank: ~
+        aantalFlessen:
+            - NotBlank: ~
+            - Type: integer
+            - Range:
+                min: 1
+                minMessage: Geen aantallen lager dan 1
+        prijs:
+            - NotBlank: ~
+            - Type: integer
+            - Range:
+                min: 0
+                minMessage: Geen prijzen lager dan 0 eurocent

@@ -1,0 +1,22 @@
+{# src/vino/PillarBundle/Resources/views/Snippets/product_review.html.twig #}
+
+{% block product_review %}
+    <div class="well">
+        <h4><b>{{ review.titel }}</b></h4>
+        <p><i>Door {{ review.klant.vNaam }} {{ review.klant.aNaam }}, datum: {{ review.datum|date('d-m-Y') }}</i></p>
+        <blockquote>{{ review.tekst }}</blockquote>
+        <p><b>Waardering:
+                {% set dezeRating = review.rating|round %}
+                <span title="({{ review.rating }} / 5)">
+                {% for i in 1..(review.rating) %}
+                    <span class="glyphicon glyphicon-star"></span>
+                {% endfor %}
+                {% if dezeRating < 5 %}
+                        {% for j in (dezeRating+1)..5 %}
+                            <span class="glyphicon glyphicon-star-empty"></span>
+                        {% endfor %}
+                {% endif %}
+                </span>    
+            </b></p>
+    </div>
+{% endblock %}
